@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCS 405 – Coding Lab</title>
+<style>
+:root{
+  --pri:#6366f1;--pri-d:#4338ca;--pri-l:#818cf8;
+  --ok:#10b981;--err:#ef4444;--warn:#f59e0b;--info:#3b82f6;
+  --bg:#0f172a;--surf:#1e293b;--surf2:#293548;--bdr:#334155;
+  --tx:#f1f5f9;--tx2:#94a3b8;--tx3:#64748b;
+  --code-bg:#0d1117;--code-bdr:#21262d;
+  --rad:12px;--rad-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.6}
+
+/* NAV */
+nav{background:var(--surf);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;padding:0 20px}
+.nav-inner{max-width:1200px;margin:auto;display:flex;align-items:center;gap:8px;height:56px}
+.nav-brand{font-weight:700;font-size:1.05rem;color:var(--warn);margin-right:12px;white-space:nowrap}
+.nav-brand span{color:var(--tx2);font-size:.78rem;font-weight:400;display:block}
+.tab-btn{background:none;border:none;color:var(--tx2);cursor:pointer;padding:7px 14px;border-radius:var(--rad-sm);font-size:.88rem;font-weight:500;transition:.2s;white-space:nowrap}
+.tab-btn:hover{background:var(--surf2);color:var(--tx)}
+.tab-btn.active{background:var(--warn);color:#000;font-weight:700}
+.back-link{margin-left:auto;background:var(--surf2);color:var(--tx2);border:1px solid var(--bdr);padding:6px 14px;border-radius:var(--rad-sm);font-size:.83rem;white-space:nowrap;text-decoration:none;transition:.2s}
+.back-link:hover{color:var(--tx);border-color:var(--pri-l)}
+
+/* LAYOUT */
+.page{display:none;max-width:1200px;margin:auto;padding:28px 20px}
+.page.active{display:block}
+.section-header{margin-bottom:28px}
+.section-header h2{font-size:1.5rem;font-weight:700;margin-bottom:6px}
+.section-header h2 span{color:var(--warn)}
+.section-header p{color:var(--tx2);font-size:.92rem}
+
+/* EXERCISE CARD */
+.ex-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);margin-bottom:24px;overflow:hidden}
+.ex-header{padding:18px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.ex-num{background:var(--warn);color:#000;border-radius:var(--rad-sm);padding:3px 12px;font-size:.8rem;font-weight:800;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.ex-tag{background:var(--surf2);color:var(--tx2);border-radius:var(--rad-sm);padding:3px 10px;font-size:.75rem;white-space:nowrap}
+.ex-tag.core{background:rgba(99,102,241,.2);color:var(--pri-l)}
+.ex-tag.practical{background:rgba(16,185,129,.15);color:var(--ok)}
+.ex-tag.concept{background:rgba(245,158,11,.15);color:var(--warn)}
+.ex-title{font-weight:700;font-size:1rem;color:var(--tx);flex:1;min-width:200px}
+.ex-body{padding:22px}
+.ex-desc{color:var(--tx2);font-size:.93rem;margin-bottom:18px;line-height:1.7}
+.ex-desc strong{color:var(--tx)}
+.ex-question{background:rgba(99,102,241,.07);border-left:3px solid var(--pri-l);padding:12px 16px;border-radius:0 var(--rad-sm) var(--rad-sm) 0;margin-bottom:18px;color:var(--tx);font-size:.93rem;line-height:1.7}
+.ex-question ol,
+.ex-question ul{padding-left:20px;margin-top:6px}
+.ex-question li{margin-bottom:4px}
+
+/* CODE BLOCKS */
+.code-block{position:relative;margin:14px 0;border-radius:var(--rad-sm);overflow:hidden;border:1px solid var(--code-bdr)}
+.code-label{background:var(--code-bdr);padding:6px 14px;font-size:.75rem;color:var(--tx3);font-family:monospace;display:flex;justify-content:space-between;align-items:center}
+.code-label .lang{color:var(--pri-l);font-weight:600}
+.copy-btn{background:none;border:1px solid var(--bdr);color:var(--tx2);cursor:pointer;padding:3px 10px;border-radius:4px;font-size:.72rem;transition:.2s}
+.copy-btn:hover{background:var(--bdr);color:var(--tx)}
+.copy-btn.copied{color:var(--ok);border-color:var(--ok)}
+pre{background:var(--code-bg);padding:18px;overflow-x:auto;font-size:.88rem;line-height:1.7;margin:0}
+code{font-family:'Cascadia Code','Fira Code','Consolas',monospace}
+
+/* SYNTAX HIGHLIGHTING */
+.kw{color:#ff7b72}     /* keywords */
+.fn{color:#d2a8ff}     /* functions */
+.st{color:#a5d6ff}     /* strings */
+.cm{color:#8b949e;font-style:italic} /* comments */
+.nu{color:#79c0ff}     /* numbers */
+.cl{color:#ffa657}     /* classes */
+.op{color:#ff7b72}     /* operators */
+.var{color:#e6edf3}    /* variables */
+.bi{color:#f0883e}     /* builtins */
+.de{color:#b0d9fb}     /* decorators */
+.out{color:#3fb950}    /* output */
+
+/* ANSWER PANEL */
+.answer-toggle{background:var(--pri);color:#fff;border:none;border-radius:var(--rad-sm);padding:9px 22px;cursor:pointer;font-size:.88rem;font-weight:600;margin-top:4px;transition:.2s}
+.answer-toggle:hover{background:var(--pri-d)}
+.answer-toggle.open{background:var(--surf2);color:var(--tx2);border:1px solid var(--bdr)}
+.answer-panel{display:none;margin-top:18px;border-top:1px solid var(--bdr);padding-top:18px;animation:fadeIn .3s ease}
+.answer-panel.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.answer-section{margin-bottom:20px}
+.answer-section h4{color:var(--warn);font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.answer-section p{color:var(--tx2);font-size:.9rem;line-height:1.7;margin-bottom:8px}
+.answer-section ul,
+.answer-section ol{padding-left:20px;color:var(--tx2);font-size:.9rem;line-height:1.7}
+.answer-section li{margin-bottom:6px}
+.answer-section strong{color:var(--tx)}
+.output-block{background:#0a1628;border:1px solid #1f3a5f;border-radius:var(--rad-sm);padding:14px 16px;font-family:monospace;font-size:.84rem;color:var(--out);margin-top:8px;white-space:pre-wrap}
+
+/* NOTE BOX */
+.note-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:var(--rad-sm);padding:12px 16px;margin:14px 0;font-size:.88rem;color:var(--tx2)}
+.note-box strong{color:var(--warn)}
+.tip-box{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.3);border-radius:var(--rad-sm);padding:12px 16px;margin:14px 0;font-size:.88rem;color:var(--tx2)}
+.tip-box strong{color:var(--ok)}
+.warn-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.3);border-radius:var(--rad-sm);padding:12px 16px;margin:14px 0;font-size:.88rem;color:var(--tx2)}
+.warn-box strong{color:var(--err)}
+
+/* CONTROLS */
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:22px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:14px 18px}
+.controls label{color:var(--tx2);font-size:.85rem;font-weight:600}
+select{background:var(--surf2);border:1px solid var(--bdr);color:var(--tx);border-radius:var(--rad-sm);padding:7px 12px;font-size:.88rem;cursor:pointer}
+select:focus{outline:2px solid var(--warn);border-color:transparent}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge.yellow{background:rgba(245,158,11,.2);color:var(--warn)}
+.badge.green{background:rgba(16,185,129,.2);color:var(--ok)}
+.badge.blue{background:rgba(99,102,241,.2);color:var(--pri-l)}
+
+/* LINE ANNOTATION */
+.line-ann{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--surf2)}
+.line-ann:last-child{border-bottom:none}
+.line-num{color:var(--tx3);font-family:monospace;font-size:.83rem;min-width:32px;text-align:right;flex-shrink:0;padding-top:1px}
+.line-code{font-family:monospace;font-size:.85rem;flex:1}
+.line-note{color:var(--tx2);font-size:.82rem;padding-left:12px;border-left:2px solid var(--bdr);flex:1.2;line-height:1.5}
+.ann-table{background:var(--code-bg);border:1px solid var(--code-bdr);border-radius:var(--rad-sm);padding:12px 16px;margin:12px 0}
+.ann-header{display:flex;gap:10px;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--bdr);color:var(--tx3);font-size:.78rem;font-weight:700;text-transform:uppercase}
+
+/* CHEATSHEET */
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:8px}
+.cheat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);overflow:hidden}
+.cheat-card-title{background:var(--surf2);padding:10px 16px;font-weight:700;font-size:.9rem;color:var(--warn);border-bottom:1px solid var(--bdr)}
+.cheat-card pre{background:var(--code-bg);padding:14px 16px;font-size:.82rem;overflow-x:auto;border:none}
+
+/* PROGRESS */
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.prog-label{font-weight:600;color:var(--tx2);font-size:.88rem}
+.prog-count{color:var(--warn);font-weight:700;font-size:.88rem}
+.prog-bar{background:var(--surf2);border-radius:20px;height:8px;overflow:hidden;margin-bottom:20px}
+.prog-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--warn),#fbbf24);transition:width .6s ease}
+
+@media(max-width:700px){
+  .ex-header{gap:8px}
+  .ann-header,.line-ann{flex-direction:column;gap:4px}
+  .line-note{border-left:none;border-top:1px solid var(--bdr);padding-left:0;padding-top:6px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">💻 Coding Lab <span>BCS 405 – Scikit-Learn &amp; Python ML</span></div>
+    <button class="tab-btn active" onclick="showPage('overview')">Overview</button>
+    <button class="tab-btn" onclick="showPage('workflow')">Full Workflow</button>
+    <button class="tab-btn" onclick="showPage('exercises')">Exercises</button>
+    <button class="tab-btn" onclick="showPage('cheatsheet')">Cheat Sheet</button>
+    <a href="exam_practice.html" class="back-link">← Back to Exam Practice</a>
+  </div>
+</nav>
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<div id="page-overview" class="page active">
+  <div class="section-header">
+    <h2>💻 <span>Coding Lab</span> — BCS 405 Artificial Intelligence</h2>
+    <p>Every line of code from your lectures and practicals — fully annotated, explained, and tested. Study the Iris classification project end-to-end.</p>
+  </div>
+
+  <div class="controls">
+    <span style="color:var(--tx2);font-size:.88rem">Jump to:</span>
+    <button class="tab-btn" onclick="showPage('workflow')" style="background:rgba(16,185,129,.15);color:var(--ok);border:1px solid var(--ok)">📋 Full Iris Workflow</button>
+    <button class="tab-btn" onclick="showPage('exercises')" style="background:rgba(245,158,11,.15);color:var(--warn);border:1px solid var(--warn)">🧠 Code Exercises</button>
+    <button class="tab-btn" onclick="showPage('cheatsheet')" style="background:rgba(99,102,241,.15);color:var(--pri-l);border:1px solid var(--pri-l)">📄 Quick Cheat Sheet</button>
+  </div>
+
+  <!-- IMPORTS DEEP DIVE -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">STEP 1</span>
+      <span class="ex-title">Installing &amp; Importing Libraries — Every Line Explained</span>
+      <span class="ex-tag core">Core</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-desc">This is the FIRST cell of every ML project. Each import brings a specific tool into your session.</div>
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="cm"># ── CELL 1: Install libraries (only needed in Google Colab) ──</span>
+<span class="op">!</span><span class="bi">pip</span> install numpy pandas matplotlib seaborn scikit-learn
+
+<span class="cm"># ── CELL 2: Import all required libraries ──</span>
+<span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> pd           <span class="cm"># tables / DataFrames (like Excel in Python)</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> np             <span class="cm"># fast numerical arrays and math operations</span>
+<span class="kw">import</span> <span class="cl">matplotlib.pyplot</span> <span class="kw">as</span> plt <span class="cm"># drawing charts (line, bar, scatter graphs)</span>
+<span class="kw">import</span> <span class="cl">seaborn</span> <span class="kw">as</span> sns           <span class="cm"># beautiful statistical visualisations</span>
+
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+<span class="cm"># ↑ loads the built-in Iris flower dataset (150 flowers, 4 measurements, 3 species)</span>
+
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="cm"># ↑ splits data into training set (to learn from) and test set (to evaluate on)</span>
+
+<span class="kw">from</span> <span class="cl">sklearn.tree</span> <span class="kw">import</span> <span class="fn">DecisionTreeClassifier</span>
+<span class="cm"># ↑ the model — a Decision Tree that classifies flowers by asking Yes/No questions</span>
+
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">classification_report</span>, <span class="fn">confusion_matrix</span>
+<span class="cm"># ↑ classification_report → precision, recall, F1 per class
+# ↑ confusion_matrix     → table showing correct vs wrong predictions</span></code></pre>
+      </div>
+
+      <div class="note-box"><strong>⚡ ! prefix:</strong> In Google Colab, <code>!</code> before a command means "run this as a shell command" (not Python). <code>pip install</code> downloads and installs a Python package. You only need to run this once per session.</div>
+
+      <div class="ann-table">
+        <div class="ann-header">
+          <span style="min-width:140px">Library</span>
+          <span style="flex:1">What it does</span>
+          <span style="flex:1">Example use</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="kw">pandas</span> <span class="op">as</span> pd</span>
+          <span class="line-note">Creates and manipulates tables (DataFrames). Like Excel inside Python. Each column = a feature.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="kw">numpy</span> <span class="op">as</span> np</span>
+          <span class="line-note">Fast multi-dimensional arrays and math. Scikit-Learn uses NumPy arrays internally for all calculations.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="kw">matplotlib.pyplot</span> <span class="op">as</span> plt</span>
+          <span class="line-note">Core plotting library. Used to draw axes, set labels, show/save figures.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="kw">seaborn</span> <span class="op">as</span> sns</span>
+          <span class="line-note">High-level charts built on matplotlib. <code>sns.pairplot()</code>, <code>sns.heatmap()</code> are exam favourites.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="fn">load_iris</span></span>
+          <span class="line-note">Returns a Bunch object with .data (150×4 array of measurements) and .target (150 class labels 0/1/2).</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="fn">train_test_split</span></span>
+          <span class="line-note">Randomly shuffles and divides X and y into training + test portions. test_size=0.2 → 80% train, 20% test.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="fn">DecisionTreeClassifier</span></span>
+          <span class="line-note">Uses CART algorithm (Gini Impurity). Builds a binary tree of feature-threshold decisions.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="fn">classification_report</span></span>
+          <span class="line-note">Prints precision, recall, F1-score, support for each class + macro/weighted averages.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code"><span class="fn">confusion_matrix</span></span>
+          <span class="line-note">Returns a matrix C where C[i][j] = number of samples of class i predicted as class j.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IRIS DATASET DEEP DIVE -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">STEP 2</span>
+      <span class="ex-title">Loading &amp; Understanding the Iris Dataset</span>
+      <span class="ex-tag core">Core</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="cm"># Load the Iris dataset from scikit-learn</span>
+iris = <span class="fn">load_iris</span>()
+
+<span class="cm"># Build a DataFrame from the raw numpy array</span>
+df = pd.<span class="fn">DataFrame</span>(iris.data, columns=iris.feature_names)
+<span class="cm"># iris.data         → numpy array of shape (150, 4)
+#   150 rows  = 150 flowers
+#     4 cols  = sepal length, sepal width, petal length, petal width (all in cm)
+# iris.feature_names→ ['sepal length (cm)', 'sepal width (cm)',
+#                       'petal length (cm)', 'petal width (cm)']</span>
+
+<span class="cm"># Add the target (answer / label) column</span>
+df[<span class="st">'target'</span>] = iris.target
+<span class="cm"># iris.target → numpy array of shape (150,) containing 0, 1, or 2
+#   0 = Iris Setosa     (50 flowers)
+#   1 = Iris Versicolor (50 flowers)
+#   2 = Iris Virginica  (50 flowers)</span>
+
+<span class="cm"># Preview the first 5 rows</span>
+df.<span class="fn">head</span>()
+<span class="cm"># Shows:
+#    sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  target
+# 0               5.1               3.5                1.4               0.2       0
+# 1               4.9               3.0                1.4               0.2       0
+# ...</span></code></pre>
+      </div>
+
+      <div class="tip-box"><strong>✅ Why pd.DataFrame?</strong> <code>iris.data</code> is a raw NumPy array — just numbers, no column names. Wrapping it in a DataFrame adds named columns, making the data much easier to read, filter, and plot.</div>
+
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python — Exploration commands</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code>df.<span class="fn">shape</span>        <span class="cm"># → (150, 5)  — 150 rows, 5 columns</span>
+df.<span class="fn">info</span>()       <span class="cm"># → column names, data types, non-null counts</span>
+df.<span class="fn">describe</span>()   <span class="cm"># → count, mean, std, min, 25%, 50%, 75%, max for each column</span>
+df.<span class="fn">isnull</span>().<span class="fn">sum</span>() <span class="cm"># → count missing values per column (should all be 0 for Iris)</span>
+df[<span class="st">'target'</span>].<span class="fn">value_counts</span>() <span class="cm"># → 0: 50, 1: 50, 2: 50  (balanced dataset)</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAIRPLOT DEEP DIVE -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">STEP 3</span>
+      <span class="ex-title">Exploratory Data Analysis — sns.pairplot() Explained</span>
+      <span class="ex-tag concept">Concept</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code>sns.<span class="fn">pairplot</span>(df, hue=<span class="st">'target'</span>)
+plt.<span class="fn">show</span>()</code></pre>
+      </div>
+
+      <div class="ex-desc">
+        <strong>What does this produce?</strong> A 4×4 grid of plots (one row and column per feature). Each off-diagonal cell is a scatter plot of two features coloured by class. Each diagonal cell is a density curve (KDE) showing the distribution of that feature per class.
+      </div>
+
+      <div class="ann-table">
+        <div class="ann-header"><span>Part of the plot</span><span style="flex:2">What it tells you (exam answer)</span></div>
+        <div class="line-ann">
+          <span class="line-code">Off-diagonal scatter plots</span>
+          <span class="line-note">Show if two features together can separate the 3 classes. Clusters that don't overlap = easy to classify.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code">Diagonal density curves</span>
+          <span class="line-note">Show distribution of ONE feature across all 3 classes. Non-overlapping curves = that feature is informative.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code">hue='target'</span>
+          <span class="line-note">Colours each dot/curve by class (0=blue, 1=orange, 2=green). Essential for seeing class separation.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code">Setosa cluster</span>
+          <span class="line-note">Sits far apart from the other two — small petals. Very easy to classify correctly.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code">Versicolor &amp; Virginica overlap</span>
+          <span class="line-note">Especially in sepal measurements — harder to separate. Model may confuse these two.</span>
+        </div>
+        <div class="line-ann">
+          <span class="line-code">Petal features</span>
+          <span class="line-note">Provide the strongest class separation. More powerful predictors than sepal features.</span>
+        </div>
+      </div>
+
+      <div class="note-box"><strong>📝 Exam tip:</strong> The pairplot is done BEFORE training any model. It's called Exploratory Data Analysis (EDA). Its purpose is to visually understand the data structure, check if features are informative, and anticipate whether the classification will be easy or hard.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FULL WORKFLOW ══════════ -->
+<div id="page-workflow" class="page">
+  <div class="section-header">
+    <h2>📋 Complete <span>Iris Classification Workflow</span></h2>
+    <p>The exact code from Lecture 4 &amp; the student project — every line annotated. This is what appeared in the notebook.</p>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">CELL 1</span>
+      <span class="ex-title">Install &amp; Import</span>
+      <span class="ex-tag core">Core</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="op">!</span><span class="bi">pip</span> install scikit-learn pandas matplotlib seaborn
+
+<span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> np
+<span class="kw">import</span> <span class="cl">matplotlib.pyplot</span> <span class="kw">as</span> plt
+<span class="kw">import</span> <span class="cl">seaborn</span> <span class="kw">as</span> sns
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cl">sklearn.tree</span> <span class="kw">import</span> <span class="fn">DecisionTreeClassifier</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">classification_report</span>, <span class="fn">confusion_matrix</span></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">CELL 2</span>
+      <span class="ex-title">Load Data &amp; Create DataFrame</span>
+      <span class="ex-tag core">Core</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code>iris = <span class="fn">load_iris</span>()                               <span class="cm"># loads the dataset</span>
+df = pd.<span class="fn">DataFrame</span>(iris.data, columns=iris.feature_names)  <span class="cm"># builds table</span>
+df[<span class="st">'target'</span>] = iris.target                        <span class="cm"># adds answer column</span>
+df.<span class="fn">head</span>()                                          <span class="cm"># shows first 5 rows</span></code></pre>
+      </div>
+      <div class="output-block">   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  target
+0               5.1               3.5                1.4               0.2       0
+1               4.9               3.0                1.4               0.2       0
+2               4.7               3.2                1.3               0.2       0
+3               4.6               3.1                1.5               0.2       0
+4               5.0               3.6                1.4               0.2       0</div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">CELL 3</span>
+      <span class="ex-title">Export to CSV &amp; Download (Google Colab)</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code>df.<span class="fn">to_csv</span>(<span class="st">"iris_data.csv"</span>, index=<span class="kw">False</span>)
+<span class="cm"># Saves the DataFrame as a CSV file
+# index=False → do NOT write the row numbers (0,1,2...) as a column in the file</span>
+
+<span class="kw">from</span> <span class="cl">google.colab</span> <span class="kw">import</span> files
+files.<span class="fn">download</span>(<span class="st">"iris_data.csv"</span>)
+<span class="cm"># Triggers a browser download of the CSV file to your computer
+# Only works in Google Colab — not in local Jupyter notebooks</span></code></pre>
+      </div>
+      <div class="note-box"><strong>📝 Note:</strong> <code>index=False</code> is important. Without it, pandas adds an extra column of row numbers (0, 1, 2 …) to the CSV file which clutters the data.</div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">CELL 4</span>
+      <span class="ex-title">View Full Dataset &amp; Pairplot</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="cm"># Show all 150 rows (pandas default is 60)</span>
+pd.<span class="fn">set_option</span>(<span class="st">'display.max_rows'</span>, <span class="nu">150</span>)
+df
+
+<span class="cm"># Visual exploration — pairplot coloured by species</span>
+sns.<span class="fn">pairplot</span>(df, hue=<span class="st">'target'</span>)
+plt.<span class="fn">show</span>()</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">CELL 5</span>
+      <span class="ex-title">Separate Features (X) and Labels (y) — then Split</span>
+      <span class="ex-tag core">Core</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="cm"># X = all columns EXCEPT 'target' → the questions (flower measurements)</span>
+X = df.<span class="fn">drop</span>(<span class="st">'target'</span>, axis=<span class="nu">1</span>)
+<span class="cm"># axis=1 means "drop a COLUMN"  (axis=0 would drop a row)</span>
+<span class="cm"># X.shape → (150, 4)  — 150 flowers, 4 measurement features</span>
+
+<span class="cm"># y = ONLY the 'target' column → the answers (which species)</span>
+y = df[<span class="st">'target'</span>]
+<span class="cm"># y.shape → (150,)  — 150 labels: 0, 1, or 2</span>
+
+<span class="cm"># Split into training set (80%) and test set (20%)</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y,
+    test_size=<span class="nu">0.2</span>,       <span class="cm"># 20% → test (30 flowers), 80% → train (120 flowers)</span>
+    random_state=<span class="nu">42</span>     <span class="cm"># fixed seed → same split every run (reproducibility)</span>
+)</code></pre>
+      </div>
+      <div class="ann-table">
+        <div class="ann-header"><span>Variable</span><span style="flex:2">Content &amp; Shape</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:110px">X_train</span><span class="line-note">120 rows × 4 cols — measurements the model learns FROM</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:110px">y_train</span><span class="line-note">120 labels (0/1/2) — correct answers during training</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:110px">X_test</span><span class="line-note">30 rows × 4 cols — measurements the model has NEVER seen</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:110px">y_test</span><span class="line-note">30 labels — the real answers, kept hidden until evaluation</span></div>
+      </div>
+      <div class="warn-box"><strong>⚠️ Critical Rule:</strong> NEVER let test data influence training. The model must not see y_test until after predictions are made. This is why we split BEFORE any preprocessing.</div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">CELL 6</span>
+      <span class="ex-title">Create Model, Train, Predict</span>
+      <span class="ex-tag core">Core</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="cm"># 1. Create the model object (no learning yet — just the empty structure)</span>
+model = <span class="fn">DecisionTreeClassifier</span>()
+
+<span class="cm"># 2. TRAIN the model — it learns patterns from X_train and y_train</span>
+model.<span class="fn">fit</span>(X_train, y_train)
+<span class="cm"># Before fit(): model knows nothing
+# After fit():  model has built a tree of yes/no questions about petal/sepal sizes
+#               that route each flower to the correct species</span>
+
+<span class="cm"># 3. PREDICT — model looks at X_test measurements and guesses species</span>
+y_pred = model.<span class="fn">predict</span>(X_test)
+<span class="cm"># y_pred → array like [1, 0, 2, 1, 1, 0, ...]  (30 predictions)
+# These are the model's GUESSES — we compare them with y_test to score it</span></code></pre>
+      </div>
+      <div class="tip-box"><strong>✅ The 3-step sklearn pattern — always the same:</strong><br>
+        <code>model = SomeClassifier()</code> → create<br>
+        <code>model.fit(X_train, y_train)</code> → train<br>
+        <code>y_pred = model.predict(X_test)</code> → predict<br>
+        This works for ALL sklearn models: LogisticRegression, RandomForestClassifier, SVC, KNeighborsClassifier, etc.
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num">CELL 7</span>
+      <span class="ex-title">Evaluate — Confusion Matrix &amp; Classification Report</span>
+      <span class="ex-tag core">Core</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code><span class="cm"># Confusion Matrix — shows where predictions were right and wrong</span>
+<span class="bi">print</span>(<span class="fn">confusion_matrix</span>(y_test, y_pred))
+
+<span class="cm"># Classification Report — precision, recall, F1 for every class</span>
+<span class="bi">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))</code></pre>
+      </div>
+      <div class="output-block">[[10  0  0]
+ [ 0  9  0]
+ [ 0  0 11]]
+
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        10
+           1       1.00      1.00      1.00         9
+           2       1.00      1.00      1.00        11
+
+    accuracy                           1.00        30
+   macro avg       1.00      1.00      1.00        30
+weighted avg       1.00      1.00      1.00        30</div>
+
+      <div class="ann-table">
+        <div class="ann-header"><span style="min-width:100px">Metric</span><span style="flex:2">Definition &amp; Formula</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:100px">Precision</span><span class="line-note">TP / (TP+FP) — "Of everything I called class X, how many really were X?" 1.00 = never made false alarms.</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:100px">Recall</span><span class="line-note">TP / (TP+FN) — "Of all actual class X flowers, how many did I find?" 1.00 = missed none.</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:100px">F1-score</span><span class="line-note">2×(P×R)/(P+R) — harmonic mean of precision &amp; recall. 1.00 = perfect balance.</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:100px">Support</span><span class="line-note">Number of actual test samples per class: 10+9+11 = 30 total.</span></div>
+        <div class="line-ann"><span class="line-code" style="min-width:100px">Confusion matrix diagonal</span><span class="line-note">[10, 9, 11] — correct predictions per class. Off-diagonal = mistakes. Perfect matrix has zeros off-diagonal.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ EXERCISES ══════════ -->
+<div id="page-exercises" class="page">
+  <div class="section-header">
+    <h2>🧠 Coding <span>Exercises</span></h2>
+    <p>Think through each question, then reveal the full answer with explanation. These cover likely exam and practical questions.</p>
+  </div>
+
+  <div class="controls">
+    <label>Filter by topic:</label>
+    <select id="exFilter" onchange="filterExercises()">
+      <option value="all">All Topics</option>
+      <option value="imports">Imports &amp; Setup</option>
+      <option value="data">Data Loading &amp; EDA</option>
+      <option value="split">Train/Test Split</option>
+      <option value="model">Model Training</option>
+      <option value="eval">Evaluation</option>
+      <option value="extend">Extended Algorithms</option>
+    </select>
+  </div>
+
+  <!-- EXERCISE 1 -->
+  <div class="ex-card" data-topic="imports">
+    <div class="ex-header">
+      <span class="ex-num">EX 1</span>
+      <span class="ex-title">What does <code>from sklearn.model_selection import train_test_split</code> actually do?</span>
+      <span class="ex-tag concept">Concept</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Explain in detail what happens when Python executes this line. What is <code>sklearn.model_selection</code>? What is <code>train_test_split</code>? Why do we import it?</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a1')">Show Answer</button>
+      <div class="answer-panel" id="a1">
+        <div class="answer-section">
+          <h4>Explanation</h4>
+          <ul>
+            <li><strong>sklearn</strong> = scikit-learn, the machine learning library. It is organised into sub-modules (sections).</li>
+            <li><strong>sklearn.model_selection</strong> = a section of scikit-learn dedicated to choosing, splitting, and evaluating models — NOT a model itself.</li>
+            <li><strong>import train_test_split</strong> = we only bring in this one specific function from that section (not the whole module).</li>
+            <li><strong>train_test_split(X, y, test_size=0.2, random_state=42)</strong> = shuffles the data randomly and divides it: 80% into training sets (X_train, y_train) and 20% into test sets (X_test, y_test).</li>
+          </ul>
+          <p><strong>Why is it needed?</strong> A model must be evaluated on data it has NEVER seen during training. If we tested on the same data we trained on, the model would score 100% by memorising — but would fail on real new data.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 2 -->
+  <div class="ex-card" data-topic="imports">
+    <div class="ex-header">
+      <span class="ex-num">EX 2</span>
+      <span class="ex-title">Identify what is wrong with this import code</span>
+      <span class="ex-tag concept">Debug</span>
+    </div>
+    <div class="ex-body">
+      <div class="code-block">
+        <div class="code-label"><span class="lang">python — find the errors</span></div>
+        <pre><code><span class="kw">import</span> Pandas <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> np
+<span class="kw">from</span> <span class="cl">sklearn.Dataset</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">trainTestSplit</span>
+<span class="kw">from</span> <span class="cl">sklearn.Tree</span> <span class="kw">import</span> <span class="fn">DecisionTreeClassifier</span></code></pre>
+      </div>
+      <button class="answer-toggle" onclick="toggleAnswer('a2')">Show Answer</button>
+      <div class="answer-panel" id="a2">
+        <div class="answer-section">
+          <h4>Errors &amp; Fixes</h4>
+          <ul>
+            <li><strong>Line 1:</strong> <code>Pandas</code> → should be <code>pandas</code> (all lowercase). Python is case-sensitive.</li>
+            <li><strong>Line 3:</strong> <code>sklearn.Dataset</code> → should be <code>sklearn.datasets</code> (lowercase, plural).</li>
+            <li><strong>Line 4:</strong> <code>trainTestSplit</code> → should be <code>train_test_split</code> (Python uses snake_case, not camelCase).</li>
+            <li><strong>Line 5:</strong> <code>sklearn.Tree</code> → should be <code>sklearn.tree</code> (lowercase).</li>
+          </ul>
+          <div class="code-block">
+            <div class="code-label"><span class="lang">python — corrected</span></div>
+            <pre><code><span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> np
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cl">sklearn.tree</span> <span class="kw">import</span> <span class="fn">DecisionTreeClassifier</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 3 -->
+  <div class="ex-card" data-topic="data">
+    <div class="ex-header">
+      <span class="ex-num">EX 3</span>
+      <span class="ex-title">What does <code>df = pd.DataFrame(iris.data, columns=iris.feature_names)</code> do line by line?</span>
+      <span class="ex-tag concept">Concept</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Break down every part of this statement and explain what each component does.</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a3')">Show Answer</button>
+      <div class="answer-panel" id="a3">
+        <div class="answer-section">
+          <h4>Line-by-line breakdown</h4>
+          <ul>
+            <li><strong>iris.data</strong> — A raw NumPy array of shape (150, 4). Contains the flower measurements as plain numbers. No column names yet.</li>
+            <li><strong>iris.feature_names</strong> — A list of 4 strings: ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']. These become the column headers.</li>
+            <li><strong>pd.DataFrame(data, columns=names)</strong> — Creates a pandas DataFrame (a named table). The <code>columns</code> argument assigns names to each of the 4 columns.</li>
+            <li><strong>df =</strong> — Stores the resulting table in a variable called df (short for "data frame").</li>
+          </ul>
+          <p><strong>Result:</strong> df is a 150×4 table with properly named columns — easy to read, filter, and plot.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 4 -->
+  <div class="ex-card" data-topic="split">
+    <div class="ex-header">
+      <span class="ex-num">EX 4</span>
+      <span class="ex-title">Explain <code>axis=1</code> in <code>df.drop('target', axis=1)</code></span>
+      <span class="ex-tag concept">Concept</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Why is <code>axis=1</code> used? What would happen with <code>axis=0</code>? What does X contain after this line?</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a4')">Show Answer</button>
+      <div class="answer-panel" id="a4">
+        <div class="answer-section">
+          <h4>Answer</h4>
+          <ul>
+            <li><strong>axis=0</strong> = rows (horizontal). Dropping with axis=0 would try to find a ROW named 'target' — which doesn't exist.</li>
+            <li><strong>axis=1</strong> = columns (vertical). Dropping with axis=1 removes the COLUMN named 'target'.</li>
+            <li><strong>Result:</strong> X contains the 4 measurement columns (sepal length, sepal width, petal length, petal width) for all 150 flowers. Shape: (150, 4).</li>
+          </ul>
+          <div class="code-block">
+            <div class="code-label"><span class="lang">python — memory aid</span></div>
+            <pre><code><span class="cm"># axis=0 → think "rows"    (going DOWN like axis 0 on a y-axis)
+# axis=1 → think "columns" (going ACROSS like axis 1 on an x-axis)
+
+X = df.<span class="fn">drop</span>(<span class="st">'target'</span>, axis=<span class="nu">1</span>)  <span class="cm"># removes the 'target' COLUMN</span>
+y = df[<span class="st">'target'</span>]               <span class="cm"># keeps ONLY the 'target' column</span></span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 5 -->
+  <div class="ex-card" data-topic="split">
+    <div class="ex-header">
+      <span class="ex-num">EX 5</span>
+      <span class="ex-title">Why is <code>random_state=42</code> used in train_test_split?</span>
+      <span class="ex-tag concept">Concept</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">What does random_state do? Why is 42 used? What would happen without it?</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a5')">Show Answer</button>
+      <div class="answer-panel" id="a5">
+        <div class="answer-section">
+          <h4>Answer</h4>
+          <ul>
+            <li><strong>random_state</strong> seeds the random number generator. With a fixed seed, the shuffle produces the same result every time.</li>
+            <li><strong>Without random_state:</strong> Every run produces a DIFFERENT train/test split. Your accuracy score changes each time, making it impossible to reproduce or compare results.</li>
+            <li><strong>With random_state=42:</strong> Same 120 training flowers and same 30 test flowers every time you run the code. Results are reproducible.</li>
+            <li><strong>Why 42?</strong> It's a convention (a reference to "The Hitchhiker's Guide to the Galaxy"). Any integer works: 0, 1, 42, 100. The number itself doesn't matter — only consistency matters.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 6 -->
+  <div class="ex-card" data-topic="model">
+    <div class="ex-header">
+      <span class="ex-num">EX 6</span>
+      <span class="ex-title">What happens inside <code>model.fit(X_train, y_train)</code>?</span>
+      <span class="ex-tag concept">Concept</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Describe what the DecisionTreeClassifier does internally when .fit() is called. What does it produce?</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a6')">Show Answer</button>
+      <div class="answer-panel" id="a6">
+        <div class="answer-section">
+          <h4>Answer</h4>
+          <ul>
+            <li><strong>Before fit():</strong> model is just an empty structure — it knows no patterns.</li>
+            <li><strong>During fit():</strong> The CART algorithm analyses X_train and y_train. It finds the feature and threshold that best splits the 120 flowers into purer groups (using Gini Impurity as the measure). It recursively splits until all leaf nodes are pure (one class only) or a stopping condition is reached.</li>
+            <li><strong>After fit():</strong> model contains a trained binary decision tree — a series of if/else questions like "Is petal length ≤ 2.45cm? → If YES → Setosa. If NO → ask next question…"</li>
+            <li><strong>Result:</strong> The tree structure is stored inside the model object. You can inspect it with <code>tree.plot_tree(model)</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 7 -->
+  <div class="ex-card" data-topic="eval">
+    <div class="ex-header">
+      <span class="ex-num">EX 7</span>
+      <span class="ex-title">Interpret this confusion matrix output</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Given this confusion matrix from the Iris test set, answer: (a) How many flowers were tested? (b) How many were correctly classified? (c) Were there any misclassifications? (d) Which class was hardest to classify?</div>
+      <div class="code-block">
+        <div class="code-label"><span class="lang">output</span></div>
+        <pre><code>[[10  0  0]
+ [ 0  9  0]
+ [ 0  0 11]]</code></pre>
+      </div>
+      <button class="answer-toggle" onclick="toggleAnswer('a7')">Show Answer</button>
+      <div class="answer-panel" id="a7">
+        <div class="answer-section">
+          <h4>Answers</h4>
+          <ul>
+            <li><strong>(a) Total flowers tested:</strong> 10 + 9 + 11 = 30 flowers (the 20% test split).</li>
+            <li><strong>(b) Correctly classified:</strong> The DIAGONAL values = 10 + 9 + 11 = 30. All 30 were correct.</li>
+            <li><strong>(c) Misclassifications:</strong> None. All off-diagonal values are 0. This is a perfect confusion matrix.</li>
+            <li><strong>(d) Hardest class:</strong> None in this case — all perfect. In general, look for the row with the most off-diagonal values.</li>
+          </ul>
+          <p><strong>How to read:</strong> Row = actual class, Column = predicted class. C[i][j] = number of flowers of class i predicted as class j. Diagonal = correct; off-diagonal = mistakes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 8 -->
+  <div class="ex-card" data-topic="eval">
+    <div class="ex-header">
+      <span class="ex-num">EX 8</span>
+      <span class="ex-title">Interpret this imperfect confusion matrix</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">A student trained on the Iris dataset and got this confusion matrix. Calculate: accuracy, and identify which classes were confused with each other.</div>
+      <div class="code-block">
+        <div class="code-label"><span class="lang">output</span></div>
+        <pre><code>[[10  0  0]
+ [ 0  8  1]
+ [ 0  2  9]]</code></pre>
+      </div>
+      <button class="answer-toggle" onclick="toggleAnswer('a8')">Show Answer</button>
+      <div class="answer-panel" id="a8">
+        <div class="answer-section">
+          <h4>Interpretation</h4>
+          <ul>
+            <li><strong>Total tested:</strong> 10 + 8 + 1 + 2 + 9 = 30 flowers.</li>
+            <li><strong>Correctly classified (diagonal):</strong> 10 + 8 + 9 = 27.</li>
+            <li><strong>Accuracy:</strong> 27 / 30 = 0.90 = 90%.</li>
+            <li><strong>Misclassifications:</strong> C[1][2] = 1 → 1 Versicolor flower was predicted as Virginica. C[2][1] = 2 → 2 Virginica flowers were predicted as Versicolor.</li>
+            <li><strong>Observation:</strong> Setosa (class 0) was classified perfectly. Versicolor and Virginica were confused with each other — consistent with what the pairplot shows (their features overlap).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 9 -->
+  <div class="ex-card" data-topic="extend">
+    <div class="ex-header">
+      <span class="ex-num">EX 9</span>
+      <span class="ex-title">Swap the model: use Random Forest instead of Decision Tree</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Rewrite cells 6–7 to use a Random Forest with 100 trees instead of a Decision Tree. Keep everything else the same.</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a9')">Show Answer</button>
+      <div class="answer-panel" id="a9">
+        <div class="answer-section">
+          <h4>Solution</h4>
+          <div class="code-block">
+            <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="cm"># Change the import at the top of your notebook:</span>
+<span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
+
+<span class="cm"># Replace the model line only — everything else stays the same</span>
+model = <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="nu">100</span>, random_state=<span class="nu">42</span>)
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)
+
+<span class="bi">print</span>(<span class="fn">confusion_matrix</span>(y_test, y_pred))
+<span class="bi">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))</code></pre>
+          </div>
+          <p><strong>Key points:</strong> The import changes from <code>sklearn.tree</code> to <code>sklearn.ensemble</code>. The class changes from <code>DecisionTreeClassifier</code> to <code>RandomForestClassifier</code>. The <code>.fit()</code> and <code>.predict()</code> calls are IDENTICAL — this is the power of sklearn's consistent API.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 10 -->
+  <div class="ex-card" data-topic="extend">
+    <div class="ex-header">
+      <span class="ex-num">EX 10</span>
+      <span class="ex-title">Compare 5 classifiers on the Iris dataset</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Write code to train and compare Logistic Regression, Decision Tree, Random Forest, SVM, and KNN on the same Iris train/test split. Print the accuracy of each.</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a10')">Show Answer</button>
+      <div class="answer-panel" id="a10">
+        <div class="answer-section">
+          <h4>Solution</h4>
+          <div class="code-block">
+            <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LogisticRegression</span>
+<span class="kw">from</span> <span class="cl">sklearn.tree</span> <span class="kw">import</span> <span class="fn">DecisionTreeClassifier</span>
+<span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
+<span class="kw">from</span> <span class="cl">sklearn.svm</span> <span class="kw">import</span> <span class="fn">SVC</span>
+<span class="kw">from</span> <span class="cl">sklearn.neighbors</span> <span class="kw">import</span> <span class="fn">KNeighborsClassifier</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">accuracy_score</span>
+
+models = {
+    <span class="st">'Logistic Regression'</span>: <span class="fn">LogisticRegression</span>(max_iter=<span class="nu">200</span>),
+    <span class="st">'Decision Tree'</span>:       <span class="fn">DecisionTreeClassifier</span>(random_state=<span class="nu">42</span>),
+    <span class="st">'Random Forest'</span>:       <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="nu">100</span>, random_state=<span class="nu">42</span>),
+    <span class="st">'SVM'</span>:                 <span class="fn">SVC</span>(kernel=<span class="st">'rbf'</span>),
+    <span class="st">'KNN (k=5)'</span>:           <span class="fn">KNeighborsClassifier</span>(n_neighbors=<span class="nu">5</span>),
+}
+
+<span class="bi">print</span>(<span class="st">f"{'Model':<25} {'Accuracy'}"</span>)
+<span class="bi">print</span>(<span class="st">"-"</span> * <span class="nu">35</span>)
+<span class="kw">for</span> name, clf <span class="kw">in</span> models.<span class="fn">items</span>():
+    clf.<span class="fn">fit</span>(X_train, y_train)
+    acc = <span class="fn">accuracy_score</span>(y_test, clf.<span class="fn">predict</span>(X_test))
+    <span class="bi">print</span>(<span class="st">f"{name:<25} {acc:.4f}"</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 11 -->
+  <div class="ex-card" data-topic="extend">
+    <div class="ex-header">
+      <span class="ex-num">EX 11</span>
+      <span class="ex-title">Add feature scaling with StandardScaler</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Modify the Iris workflow to add StandardScaler before training a KNN classifier. Explain WHY scaling is important for KNN and why you must NOT call fit_transform on the test set.</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a11')">Show Answer</button>
+      <div class="answer-panel" id="a11">
+        <div class="answer-section">
+          <h4>Solution with explanation</h4>
+          <div class="code-block">
+            <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+<span class="kw">from</span> <span class="cl">sklearn.neighbors</span> <span class="kw">import</span> <span class="fn">KNeighborsClassifier</span>
+
+<span class="cm"># Step 1: Create the scaler</span>
+scaler = <span class="fn">StandardScaler</span>()
+
+<span class="cm"># Step 2: fit_transform on TRAINING data only
+# fit()      → learns mean and std from X_train
+# transform()→ applies (x - mean) / std to X_train</span>
+X_train_scaled = scaler.<span class="fn">fit_transform</span>(X_train)
+
+<span class="cm"># Step 3: transform ONLY on test data (use the SAME mean/std from training!)
+# ❌ WRONG: scaler.fit_transform(X_test)  → leaks test info into training
+# ✅ RIGHT: scaler.transform(X_test)</span>
+X_test_scaled  = scaler.<span class="fn">transform</span>(X_test)
+
+<span class="cm"># Step 4: Train and evaluate</span>
+knn = <span class="fn">KNeighborsClassifier</span>(n_neighbors=<span class="nu">5</span>)
+knn.<span class="fn">fit</span>(X_train_scaled, y_train)
+y_pred = knn.<span class="fn">predict</span>(X_test_scaled)
+<span class="bi">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))</code></pre>
+          </div>
+          <p><strong>Why KNN needs scaling:</strong> KNN uses Euclidean distance. Without scaling, a feature measured in large units (e.g., 0–100cm) dominates the distance calculation over features in small units (e.g., 0–1cm). StandardScaler normalises all features to the same scale (mean=0, std=1), giving each equal influence.</p>
+          <p><strong>Why NOT fit_transform on test:</strong> If you fit the scaler on test data, its mean/std come partly from test data. During training you would be using different scale parameters than at test time — a form of DATA LEAKAGE that inflates accuracy scores artificially.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 12 -->
+  <div class="ex-card" data-topic="extend">
+    <div class="ex-header">
+      <span class="ex-num">EX 12</span>
+      <span class="ex-title">Write a complete K-Means clustering example from scratch</span>
+      <span class="ex-tag practical">Practical</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-question">Using the Iris dataset (X only — no labels), apply K-Means with k=3 clusters, print the cluster labels, and calculate the Silhouette Score.</div>
+      <button class="answer-toggle" onclick="toggleAnswer('a12')">Show Answer</button>
+      <div class="answer-panel" id="a12">
+        <div class="answer-section">
+          <h4>Solution</h4>
+          <div class="code-block">
+            <div class="code-label"><span class="lang">python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">from</span> <span class="cl">sklearn.cluster</span> <span class="kw">import</span> <span class="fn">KMeans</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">silhouette_score</span>
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+
+iris = <span class="fn">load_iris</span>()
+X = iris.data  <span class="cm"># use only features — NO labels (unsupervised!)</span>
+
+<span class="cm"># Create and fit K-Means with k=3</span>
+kmeans = <span class="fn">KMeans</span>(n_clusters=<span class="nu">3</span>, random_state=<span class="nu">42</span>)
+kmeans.<span class="fn">fit</span>(X)
+
+labels = kmeans.labels_              <span class="cm"># cluster assignment for each flower</span>
+centers = kmeans.cluster_centers_    <span class="cm"># coordinates of the 3 cluster centroids</span>
+
+<span class="bi">print</span>(<span class="st">"Cluster labels (first 10):"</span>, labels[:<span class="nu">10</span>])
+<span class="bi">print</span>(<span class="st">"Inertia:"</span>, kmeans.inertia_)   <span class="cm"># sum of squared distances to centroids</span>
+
+score = <span class="fn">silhouette_score</span>(X, labels)
+<span class="bi">print</span>(<span class="st">f"Silhouette Score: {score:.4f}"</span>)
+<span class="cm"># Silhouette score: -1 to +1. Closer to 1 = tight, well-separated clusters.</span></code></pre>
+          </div>
+          <p><strong>Note:</strong> This is UNSUPERVISED — we never use <code>iris.target</code>. The model discovers clusters purely from the measurement patterns. With k=3 on Iris, it often recovers the 3 species naturally.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CHEAT SHEET ══════════ -->
+<div id="page-cheatsheet" class="page">
+  <div class="section-header">
+    <h2>📄 Quick <span>Cheat Sheet</span></h2>
+    <p>All essential sklearn patterns on one page. Study these for the practical exam.</p>
+  </div>
+
+  <div class="cheat-grid">
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">1. Standard Imports</div>
+      <pre><code><span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> np
+<span class="kw">import</span> <span class="cl">matplotlib.pyplot</span> <span class="kw">as</span> plt
+<span class="kw">import</span> <span class="cl">seaborn</span> <span class="kw">as</span> sns</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">2. Load Iris Dataset</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+iris = <span class="fn">load_iris</span>()
+df = pd.<span class="fn">DataFrame</span>(iris.data,
+       columns=iris.feature_names)
+df[<span class="st">'target'</span>] = iris.target</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">3. Train/Test Split</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+X = df.<span class="fn">drop</span>(<span class="st">'target'</span>, axis=<span class="nu">1</span>)
+y = df[<span class="st">'target'</span>]
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="nu">0.2</span>, random_state=<span class="nu">42</span>)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">4. Feature Scaling</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+scaler = <span class="fn">StandardScaler</span>()
+X_train = scaler.<span class="fn">fit_transform</span>(X_train)
+X_test  = scaler.<span class="fn">transform</span>(X_test) <span class="cm"># NOT fit_transform!</span></code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">5. Decision Tree</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.tree</span> <span class="kw">import</span> <span class="fn">DecisionTreeClassifier</span>
+model = <span class="fn">DecisionTreeClassifier</span>(random_state=<span class="nu">42</span>)
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">6. Random Forest</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
+model = <span class="fn">RandomForestClassifier</span>(
+    n_estimators=<span class="nu">100</span>, random_state=<span class="nu">42</span>)
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">7. Logistic Regression</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LogisticRegression</span>
+model = <span class="fn">LogisticRegression</span>(max_iter=<span class="nu">200</span>)
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">8. KNN</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.neighbors</span> <span class="kw">import</span> <span class="fn">KNeighborsClassifier</span>
+model = <span class="fn">KNeighborsClassifier</span>(n_neighbors=<span class="nu">5</span>)
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">9. SVM</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.svm</span> <span class="kw">import</span> <span class="fn">SVC</span>
+model = <span class="fn">SVC</span>(kernel=<span class="st">'rbf'</span>, C=<span class="nu">1.0</span>)
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">10. Evaluation Metrics</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> (
+    <span class="fn">accuracy_score</span>, <span class="fn">confusion_matrix</span>,
+    <span class="fn">classification_report</span>)
+
+<span class="bi">print</span>(<span class="fn">accuracy_score</span>(y_test, y_pred))
+<span class="bi">print</span>(<span class="fn">confusion_matrix</span>(y_test, y_pred))
+<span class="bi">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">11. Cross-Validation</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">cross_val_score</span>
+scores = <span class="fn">cross_val_score</span>(model, X, y, cv=<span class="nu">5</span>)
+<span class="bi">print</span>(scores)         <span class="cm"># 5 individual scores</span>
+<span class="bi">print</span>(scores.<span class="fn">mean</span>())  <span class="cm"># average accuracy</span>
+<span class="bi">print</span>(scores.<span class="fn">std</span>())   <span class="cm"># variance in results</span></code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">12. K-Means Clustering</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.cluster</span> <span class="kw">import</span> <span class="fn">KMeans</span>
+kmeans = <span class="fn">KMeans</span>(n_clusters=<span class="nu">3</span>, random_state=<span class="nu">42</span>)
+kmeans.<span class="fn">fit</span>(X)           <span class="cm"># no y — unsupervised!</span>
+labels = kmeans.labels_
+inertia = kmeans.inertia_</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">13. Pipeline</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">Pipeline</span>
+pipe = <span class="fn">Pipeline</span>([
+    (<span class="st">'scaler'</span>, <span class="fn">StandardScaler</span>()),
+    (<span class="st">'clf'</span>, <span class="fn">DecisionTreeClassifier</span>())
+])
+pipe.<span class="fn">fit</span>(X_train, y_train)
+y_pred = pipe.<span class="fn">predict</span>(X_test)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">14. Pairplot (EDA)</div>
+      <pre><code>sns.<span class="fn">pairplot</span>(df, hue=<span class="st">'target'</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># Confusion matrix heatmap</span>
+cm = <span class="fn">confusion_matrix</span>(y_test, y_pred)
+sns.<span class="fn">heatmap</span>(cm, annot=<span class="kw">True</span>, fmt=<span class="st">'d'</span>,
+            cmap=<span class="st">'Blues'</span>)
+plt.<span class="fn">show</span>()</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">15. Feature Importance</div>
+      <pre><code><span class="cm"># Works with tree-based models</span>
+importances = model.feature_importances_
+indices = np.<span class="fn">argsort</span>(importances)[::-<span class="nu">1</span>]
+<span class="kw">for</span> i <span class="kw">in</span> indices:
+    <span class="bi">print</span>(<span class="st">f"{iris.feature_names[i]}: {importances[i]:.4f}"</span>)</code></pre>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">16. Encode Categorical Labels</div>
+      <pre><code><span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">LabelEncoder</span>
+le = <span class="fn">LabelEncoder</span>()
+<span class="cm"># Iris target is already 0/1/2 — but for text labels:</span>
+y_encoded = le.<span class="fn">fit_transform</span>([<span class="st">'setosa'</span>,<span class="st">'versicolor'</span>,<span class="st">'setosa'</span>])
+<span class="cm"># → [0, 2, 0]</span></code></pre>
+    </div>
+
+  </div>
+
+  <!-- KEY RULES BOX -->
+  <div style="margin-top:28px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:24px">
+    <h3 style="color:var(--warn);margin-bottom:16px;font-size:1rem">⚡ 10 Rules You Must Know for the Exam</h3>
+    <ol style="padding-left:20px;color:var(--tx2);font-size:.9rem;line-height:2">
+      <li>Always split data BEFORE preprocessing — never after.</li>
+      <li>Use <code>fit_transform()</code> on training data; use <code>transform()</code> ONLY on test data.</li>
+      <li>KNN and SVM require feature scaling; Decision Trees do NOT.</li>
+      <li>The 3-step pattern for ALL sklearn models: create → <code>.fit()</code> → <code>.predict()</code>.</li>
+      <li>Iris dataset: 150 samples, 4 features, 3 classes (0=Setosa, 1=Versicolor, 2=Virginica).</li>
+      <li>Confusion matrix diagonal = correct predictions; off-diagonal = mistakes.</li>
+      <li>F1-score = harmonic mean of Precision and Recall.</li>
+      <li>Overfitting: high train accuracy, low test accuracy → model too complex.</li>
+      <li>Underfitting: low accuracy on BOTH train and test → model too simple.</li>
+      <li><code>random_state=42</code> ensures reproducibility — same results every run.</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+name+"'"))
+      b.classList.add('active');
+  });
+}
+
+function toggleAnswer(id){
+  const panel = document.getElementById(id);
+  const btn = panel.previousElementSibling;
+  const open = panel.classList.contains('show');
+  panel.classList.toggle('show',!open);
+  btn.textContent = open ? 'Show Answer' : 'Hide Answer';
+  btn.classList.toggle('open',!open);
+}
+
+function copyCode(btn){
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText || pre.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+  });
+}
+
+function filterExercises(){
+  const val = document.getElementById('exFilter').value;
+  document.querySelectorAll('#page-exercises .ex-card').forEach(card=>{
+    card.style.display = (val==='all'||card.dataset.topic===val) ? 'block' : 'none';
+  });
+}
+</script>
+</body>
+</html>

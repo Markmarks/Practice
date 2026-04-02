@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCS 405 – AI Exam Practice</title>
+<style>
+:root{
+  --pri:#6366f1;--pri-d:#4338ca;--pri-l:#818cf8;
+  --ok:#10b981;--err:#ef4444;--warn:#f59e0b;--info:#3b82f6;
+  --bg:#0f172a;--surf:#1e293b;--surf2:#293548;--bdr:#334155;
+  --tx:#f1f5f9;--tx2:#94a3b8;--tx3:#64748b;
+  --rad:12px;--rad-sm:8px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.6}
+a{color:var(--pri-l);text-decoration:none}
+
+/* ── NAV ── */
+nav{background:var(--surf);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;padding:0 20px}
+.nav-inner{max-width:1100px;margin:auto;display:flex;align-items:center;gap:8px;height:58px}
+.nav-brand{font-weight:700;font-size:1.1rem;color:var(--pri-l);margin-right:16px;white-space:nowrap}
+.nav-brand span{color:var(--tx2);font-size:.8rem;font-weight:400;display:block}
+.nav-tabs{display:flex;gap:4px;flex:1}
+.tab-btn{background:none;border:none;color:var(--tx2);cursor:pointer;padding:8px 16px;border-radius:var(--rad-sm);font-size:.9rem;font-weight:500;transition:.2s;white-space:nowrap}
+.tab-btn:hover{background:var(--surf2);color:var(--tx)}
+.tab-btn.active{background:var(--pri);color:#fff}
+.coding-link{background:var(--warn);color:#000!important;font-weight:700;padding:8px 16px;border-radius:var(--rad-sm);font-size:.85rem;white-space:nowrap;transition:.2s}
+.coding-link:hover{background:#fbbf24}
+
+/* ── PAGES ── */
+.page{display:none;max-width:1100px;margin:auto;padding:28px 20px}
+.page.active{display:block}
+
+/* ── HOME ── */
+.hero{text-align:center;padding:40px 20px 32px}
+.hero h1{font-size:2.2rem;font-weight:800;margin-bottom:12px}
+.hero h1 span{color:var(--pri-l)}
+.hero p{color:var(--tx2);font-size:1.05rem;max-width:600px;margin:auto}
+.badge{display:inline-block;background:var(--pri);color:#fff;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600;margin-bottom:16px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:32px 0}
+.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:20px;text-align:center}
+.stat-card .num{font-size:2rem;font-weight:800;color:var(--pri-l)}
+.stat-card .lbl{color:var(--tx2);font-size:.85rem;margin-top:4px}
+.quick-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:32px}
+.qbtn{padding:12px 28px;border-radius:var(--rad-sm);border:none;cursor:pointer;font-size:.95rem;font-weight:600;transition:.2s}
+.qbtn.primary{background:var(--pri);color:#fff}.qbtn.primary:hover{background:var(--pri-d)}
+.qbtn.secondary{background:var(--surf2);color:var(--tx);border:1px solid var(--bdr)}.qbtn.secondary:hover{background:var(--bdr)}
+.qbtn.warning{background:var(--warn);color:#000}.qbtn.warning:hover{background:#fbbf24}
+.info-box{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:20px 24px;margin-top:32px}
+.info-box h3{color:var(--pri-l);margin-bottom:12px;font-size:1rem}
+.info-box ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+.info-box li{color:var(--tx2);font-size:.88rem;padding-left:16px;position:relative}
+.info-box li::before{content:'✦';position:absolute;left:0;color:var(--pri-l);font-size:.7rem;top:3px}
+
+/* ── CONTROLS ── */
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:24px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:16px 20px}
+.controls label{color:var(--tx2);font-size:.85rem;font-weight:600;margin-right:4px}
+select,input[type=text]{background:var(--surf2);border:1px solid var(--bdr);color:var(--tx);border-radius:var(--rad-sm);padding:7px 12px;font-size:.88rem;cursor:pointer}
+select:focus,input:focus{outline:2px solid var(--pri);border-color:transparent}
+.controls-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.progress-info{color:var(--tx2);font-size:.85rem}
+.score-badge{background:var(--pri);color:#fff;border-radius:20px;padding:4px 14px;font-size:.85rem;font-weight:700}
+
+/* ── QUESTION CARD ── */
+.q-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:28px;margin-bottom:20px;box-shadow:var(--shadow);transition:.3s}
+.q-card.answered-correct{border-color:var(--ok);background:rgba(16,185,129,.06)}
+.q-card.answered-wrong{border-color:var(--err);background:rgba(239,68,68,.06)}
+.q-meta{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.q-num{background:var(--pri);color:#fff;border-radius:var(--rad-sm);padding:3px 10px;font-size:.78rem;font-weight:700}
+.q-topic{background:var(--surf2);color:var(--tx2);border-radius:var(--rad-sm);padding:3px 10px;font-size:.78rem}
+.q-diff{border-radius:var(--rad-sm);padding:3px 10px;font-size:.78rem;font-weight:600}
+.q-diff.easy{background:rgba(16,185,129,.2);color:var(--ok)}
+.q-diff.medium{background:rgba(245,158,11,.2);color:var(--warn)}
+.q-diff.hard{background:rgba(239,68,68,.2);color:var(--err)}
+.q-text{font-size:1.05rem;font-weight:500;margin-bottom:20px;line-height:1.7}
+.options{display:grid;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:12px;background:var(--surf2);border:2px solid var(--bdr);border-radius:var(--rad-sm);padding:12px 16px;cursor:pointer;transition:.2s;user-select:none}
+.opt:hover:not(.disabled){border-color:var(--pri-l);background:rgba(99,102,241,.1)}
+.opt.selected{border-color:var(--pri);background:rgba(99,102,241,.15)}
+.opt.correct{border-color:var(--ok);background:rgba(16,185,129,.15)!important}
+.opt.wrong{border-color:var(--err);background:rgba(239,68,68,.15)!important}
+.opt.show-correct{border-color:var(--ok);background:rgba(16,185,129,.1)}
+.opt.disabled{cursor:default}
+.opt-letter{min-width:28px;height:28px;border-radius:50%;background:var(--bdr);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;margin-top:1px}
+.opt.correct .opt-letter{background:var(--ok);color:#fff}
+.opt.wrong .opt-letter{background:var(--err);color:#fff}
+.opt.show-correct .opt-letter{background:var(--ok);color:#fff}
+.opt-text{font-size:.95rem;line-height:1.5}
+
+/* ── FEEDBACK ── */
+.feedback{margin-top:20px;padding:16px 20px;border-radius:var(--rad-sm);display:none;animation:fadeIn .3s ease}
+.feedback.show{display:block}
+.feedback.correct{background:rgba(16,185,129,.12);border:1px solid var(--ok)}
+.feedback.wrong{background:rgba(239,68,68,.1);border:1px solid var(--err)}
+.feedback-header{font-weight:700;font-size:.95rem;margin-bottom:6px}
+.feedback.correct .feedback-header{color:var(--ok)}
+.feedback.wrong .feedback-header{color:var(--err)}
+.feedback-body{color:var(--tx2);font-size:.9rem;line-height:1.6}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TRUE/FALSE ── */
+.tf-grid{display:grid;gap:16px}
+.tf-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:22px 24px}
+.tf-card.answered-correct{border-color:var(--ok)}
+.tf-card.answered-wrong{border-color:var(--err)}
+.tf-statement{font-size:1rem;margin-bottom:16px;font-weight:500;line-height:1.6}
+.tf-btns{display:flex;gap:10px}
+.tf-btn{padding:8px 24px;border-radius:var(--rad-sm);border:2px solid var(--bdr);background:var(--surf2);color:var(--tx);cursor:pointer;font-weight:600;font-size:.9rem;transition:.2s}
+.tf-btn:hover:not(.disabled){border-color:var(--pri-l)}
+.tf-btn.true-btn:hover:not(.disabled){border-color:var(--ok);background:rgba(16,185,129,.1)}
+.tf-btn.false-btn:hover:not(.disabled){border-color:var(--err);background:rgba(239,68,68,.1)}
+.tf-btn.disabled{cursor:default;opacity:.7}
+.tf-btn.selected-true{border-color:var(--ok);background:rgba(16,185,129,.15);color:var(--ok)}
+.tf-btn.selected-false{border-color:var(--err);background:rgba(239,68,68,.15);color:var(--err)}
+.tf-btn.revealed-true{border-color:var(--ok);color:var(--ok)}
+.tf-btn.revealed-false{border-color:var(--err);color:var(--err)}
+
+/* ── WRITING ── */
+.writing-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:28px;margin-bottom:20px}
+.w-question{font-size:1.05rem;font-weight:500;margin-bottom:8px;line-height:1.7}
+.w-marks{color:var(--warn);font-size:.85rem;font-weight:600;margin-bottom:16px}
+.reveal-btn{background:var(--pri);color:#fff;border:none;border-radius:var(--rad-sm);padding:9px 22px;cursor:pointer;font-size:.88rem;font-weight:600;transition:.2s}
+.reveal-btn:hover{background:var(--pri-d)}
+.reveal-btn.revealed{background:var(--surf2);color:var(--tx2);border:1px solid var(--bdr)}
+.model-answer{display:none;margin-top:20px;background:rgba(99,102,241,.07);border:1px solid var(--pri);border-radius:var(--rad-sm);padding:20px 22px}
+.model-answer.show{display:block;animation:fadeIn .3s ease}
+.model-answer h4{color:var(--pri-l);font-size:.88rem;font-weight:700;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+.model-answer p,.model-answer li{color:var(--tx2);font-size:.93rem;line-height:1.7;margin-bottom:8px}
+.model-answer ul,.model-answer ol{padding-left:20px}
+.model-answer strong{color:var(--tx)}
+.sub-q{margin-top:12px}
+.sub-q .sub-label{font-weight:700;color:var(--tx);font-size:.9rem;margin-bottom:4px}
+
+/* ── RESULTS ── */
+.results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.res-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rad);padding:24px;text-align:center}
+.res-card .big{font-size:2.5rem;font-weight:800;margin-bottom:4px}
+.res-card .lbl{color:var(--tx2);font-size:.85rem}
+.big.ok{color:var(--ok)}.big.err{color:var(--err)}.big.pri{color:var(--pri-l)}.big.warn{color:var(--warn)}
+.prog-bar{background:var(--surf2);border-radius:20px;height:12px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--pri),var(--pri-l));transition:width .8s ease}
+.reset-btn{background:var(--pri);color:#fff;border:none;border-radius:var(--rad-sm);padding:10px 28px;cursor:pointer;font-size:.95rem;font-weight:600;margin-top:24px}
+.reset-btn:hover{background:var(--pri-d)}
+.grade-display{text-align:center;margin:24px 0}
+.grade-letter{font-size:5rem;font-weight:900;line-height:1}
+.grade-msg{color:var(--tx2);margin-top:8px;font-size:1rem}
+
+/* ── SECTION HEADERS ── */
+.section-header{margin-bottom:28px}
+.section-header h2{font-size:1.5rem;font-weight:700;margin-bottom:6px}
+.section-header p{color:var(--tx2);font-size:.92rem}
+.section-divider{display:flex;align-items:center;gap:12px;margin:32px 0 20px}
+.section-divider h3{font-size:1rem;font-weight:700;color:var(--pri-l);white-space:nowrap}
+.section-divider hr{flex:1;border:none;border-top:1px solid var(--bdr)}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:60px 20px;color:var(--tx3)}
+.empty .icon{font-size:3rem;margin-bottom:12px}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.pill.ok{background:rgba(16,185,129,.2);color:var(--ok)}
+.pill.err{background:rgba(239,68,68,.2);color:var(--err)}
+@media(max-width:600px){
+  .nav-inner{flex-wrap:wrap;height:auto;padding:8px 0;gap:6px}
+  .nav-tabs{flex-wrap:wrap}
+  .tab-btn{padding:6px 10px;font-size:.8rem}
+  .hero h1{font-size:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">BCS 405 <span>Artificial Intelligence</span></div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="showPage('home')">🏠 Home</button>
+      <button class="tab-btn" onclick="showPage('objectives')">📋 Objectives</button>
+      <button class="tab-btn" onclick="showPage('trueFalse')">✔️ True/False</button>
+      <button class="tab-btn" onclick="showPage('writing')">✍️ Writing</button>
+      <button class="tab-btn" onclick="showPage('results')">📊 Scores</button>
+    </div>
+    <a href="coding_lab.html" class="coding-link">💻 Coding Lab →</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════ HOME ══════════════════════ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="badge">BCS 405 · BTECH Computer Science</div>
+    <h1>Artificial Intelligence<br><span>Exam Practice App</span></h1>
+    <p>Practice all exam question types: Multiple Choice Objectives, True/False, and Written Questions — with instant correct answers and explanations.</p>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="num">50</div><div class="lbl">Objective Questions</div></div>
+    <div class="stat-card"><div class="num">10</div><div class="lbl">True / False</div></div>
+    <div class="stat-card"><div class="num">15</div><div class="lbl">Writing Questions</div></div>
+    <div class="stat-card"><div class="num">25</div><div class="lbl">Coding Exercises</div></div>
+  </div>
+  <div class="quick-btns">
+    <button class="qbtn primary" onclick="showPage('objectives')">📋 Practice Objectives (MCQ)</button>
+    <button class="qbtn secondary" onclick="showPage('trueFalse')">✔️ True / False</button>
+    <button class="qbtn secondary" onclick="showPage('writing')">✍️ Writing Questions</button>
+    <a href="coding_lab.html"><button class="qbtn warning">💻 Open Coding Lab</button></a>
+  </div>
+  <div class="info-box" style="margin-top:32px">
+    <h3>📚 Topics Covered</h3>
+    <ul>
+      <li>Definitions &amp; History of AI</li>
+      <li>Intelligent Agents &amp; PEAS Framework</li>
+      <li>Types of Agents (5 architectures)</li>
+      <li>Task Environment Properties</li>
+      <li>Search Strategies (BFS, DFS, A*)</li>
+      <li>Machine Learning Paradigms</li>
+      <li>Supervised Learning Algorithms</li>
+      <li>Unsupervised Learning &amp; Clustering</li>
+      <li>Reinforcement Learning</li>
+      <li>Model Evaluation Metrics</li>
+      <li>Scikit-Learn Library</li>
+      <li>Overfitting, Underfitting, Regularization</li>
+      <li>Expert Systems</li>
+      <li>Fuzzy Logic</li>
+      <li>Neural Networks Basics</li>
+    </ul>
+  </div>
+  <div class="info-box" style="margin-top:16px">
+    <h3>📝 Actual Exam Format (End of Semester 2022/2023)</h3>
+    <ul>
+      <li>Total Marks: 60 · Time: 2.5 Hours</li>
+      <li>Section A – Objectives: 30 MCQ questions (1 mark each)</li>
+      <li>Section B – Written: 30 marks (Answer Q1 + any other)</li>
+      <li>Question 1: 15 marks (compulsory)</li>
+      <li>Questions 2 &amp; 3: 15 marks each (choose one)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════ OBJECTIVES ══════════════════════ -->
+<div id="page-objectives" class="page">
+  <div class="section-header">
+    <h2>📋 Objectives — Multiple Choice Questions</h2>
+    <p>Select an answer and get instant feedback with explanation. Includes questions from the actual BCS 405 exam paper.</p>
+  </div>
+  <div class="controls">
+    <label>Topic:</label>
+    <select id="topicFilter" onchange="renderMCQ()">
+      <option value="all">All Topics</option>
+      <option value="Agents & AI Basics">Agents &amp; AI Basics</option>
+      <option value="Search">Search Strategies</option>
+      <option value="Machine Learning">Machine Learning</option>
+      <option value="Scikit-Learn">Scikit-Learn</option>
+      <option value="Evaluation">Model Evaluation</option>
+      <option value="Expert Systems">Expert Systems &amp; Fuzzy Logic</option>
+    </select>
+    <label style="margin-left:8px">Difficulty:</label>
+    <select id="diffFilter" onchange="renderMCQ()">
+      <option value="all">All</option>
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <div class="controls-right">
+      <span class="progress-info" id="mcqProgress">0 / 0 answered</span>
+      <span class="score-badge" id="mcqScore">Score: 0%</span>
+      <button class="qbtn secondary" style="padding:6px 14px;font-size:.82rem" onclick="resetMCQ()">Reset</button>
+    </div>
+  </div>
+  <div id="mcqContainer"></div>
+</div>
+
+<!-- ══════════════════════ TRUE/FALSE ══════════════════════ -->
+<div id="page-trueFalse" class="page">
+  <div class="section-header">
+    <h2>✔️ True / False Questions</h2>
+    <p>Questions 21–30 from the actual BCS 405 exam. Indicate whether each statement is TRUE or FALSE.</p>
+  </div>
+  <div class="controls">
+    <span class="progress-info" id="tfProgress">0 / 10 answered</span>
+    <div class="controls-right">
+      <span class="score-badge" id="tfScore">Score: 0%</span>
+      <button class="qbtn secondary" style="padding:6px 14px;font-size:.82rem" onclick="resetTF()">Reset</button>
+    </div>
+  </div>
+  <div id="tfContainer" class="tf-grid"></div>
+</div>
+
+<!-- ══════════════════════ WRITING ══════════════════════ -->
+<div id="page-writing" class="page">
+  <div class="section-header">
+    <h2>✍️ Writing Questions</h2>
+    <p>Read each question carefully, formulate your answer, then click "Reveal Model Answer" to compare. Based on actual BCS 405 Section B questions.</p>
+  </div>
+  <div class="controls">
+    <label>Section:</label>
+    <select id="writingFilter" onchange="renderWriting()">
+      <option value="all">All Sections</option>
+      <option value="Section B - Q1">Section B – Q1 (Compulsory)</option>
+      <option value="Section B - Q2">Section B – Q2</option>
+      <option value="Section B - Q3">Section B – Q3</option>
+      <option value="Extra Practice">Extra Practice</option>
+    </select>
+  </div>
+  <div id="writingContainer"></div>
+</div>
+
+<!-- ══════════════════════ RESULTS ══════════════════════ -->
+<div id="page-results" class="page">
+  <div class="section-header">
+    <h2>📊 Your Session Scores</h2>
+    <p>Track your performance across all question types.</p>
+  </div>
+  <div class="results-grid">
+    <div class="res-card">
+      <div class="big pri" id="res-mcq-score">—</div>
+      <div class="lbl">MCQ Score</div>
+      <div class="prog-bar" style="margin-top:12px"><div class="prog-fill" id="res-mcq-bar" style="width:0%"></div></div>
+    </div>
+    <div class="res-card">
+      <div class="big warn" id="res-tf-score">—</div>
+      <div class="lbl">True/False Score</div>
+      <div class="prog-bar" style="margin-top:12px"><div class="prog-fill" id="res-tf-bar" style="width:0%;background:linear-gradient(90deg,var(--warn),#fbbf24)"></div></div>
+    </div>
+    <div class="res-card">
+      <div class="big ok" id="res-total-score">—</div>
+      <div class="lbl">Overall Score</div>
+      <div class="prog-bar" style="margin-top:12px"><div class="prog-fill" id="res-total-bar" style="width:0%;background:linear-gradient(90deg,var(--ok),#34d399)"></div></div>
+    </div>
+  </div>
+  <div class="grade-display">
+    <div class="grade-letter" id="gradeDisplay" style="color:var(--tx3)">—</div>
+    <div class="grade-msg" id="gradeMsg">Answer some questions to see your grade</div>
+  </div>
+  <div style="text-align:center">
+    <button class="reset-btn" onclick="resetAll()">🔄 Reset All Scores</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+
+const mcqData = [
+/* ── AGENTS & AI BASICS ── (from actual exam + lectures) */
+{id:1,topic:"Agents & AI Basics",diff:"easy",
+ q:"Which instruments are used for perceiving and acting upon the environment?",
+ opts:["Sensors and Actuators","Sensors only","Perceiver","None of the mentioned"],
+ ans:0,
+ exp:"Agents perceive through SENSORS (cameras, microphones, etc.) and act through ACTUATORS (motors, speakers, etc.). This is the core hardware interface of any intelligent agent."},
+
+{id:2,topic:"Search",diff:"easy",
+ q:"Which search method takes less memory?",
+ opts:["Depth-First Search","Breadth-First Search","Linear Search","Optimal Search"],
+ ans:0,
+ exp:"Depth-First Search (DFS) uses O(bm) memory where b=branching factor and m=max depth. BFS stores all nodes at the current level, requiring O(b^d) memory — much more. So DFS is more memory-efficient."},
+
+{id:3,topic:"Search",diff:"medium",
+ q:"What is the main task of a problem-solving agent?",
+ opts:["Solve the given problem and reach the goal","To find out which sequence of actions will get it to the goal state","Perceive the environment","None of the mentioned"],
+ ans:1,
+ exp:"A problem-solving agent does not just 'solve' — it specifically determines the SEQUENCE OF ACTIONS (a plan) that leads from the initial state to the goal state. The search is for this action sequence."},
+
+{id:4,topic:"Search",diff:"medium",
+ q:"What is state space?",
+ opts:["The whole problem","Your definition of a problem","Problem you design","Representing your problem with variables and parameters"],
+ ans:3,
+ exp:"State space is a representation of a problem using variables and parameters. It is the set of all possible states reachable from the initial state by applying any sequence of actions."},
+
+{id:5,topic:"Expert Systems & Fuzzy Logic",diff:"medium",
+ q:"What is the form of Fuzzy logic?",
+ opts:["Two-valued logic","Crisp set logic","Binary set logic","Many-valued logic"],
+ ans:3,
+ exp:"Fuzzy logic is MANY-VALUED (multi-valued) logic. Unlike classical (crisp/binary) logic which uses only 0 or 1, fuzzy logic allows degrees of truth between 0 and 1 (e.g., 0.7 'mostly true')."},
+
+{id:6,topic:"Search",diff:"medium",
+ q:"A search algorithm takes ___ as an input and returns ___ as an output.",
+ opts:["Input, output","Problem, Solution","Solution, Problem","Parameters, sequence of actions"],
+ ans:1,
+ exp:"A search algorithm takes a PROBLEM (with initial state, goal state, actions, and transition model) as input and returns a SOLUTION — which is a sequence of actions that reaches the goal."},
+
+{id:7,topic:"Agents & AI Basics",diff:"easy",
+ q:"What is meant by an agent's percept sequence?",
+ opts:["Used to perceive the environment","Complete history of actuator outputs","Complete history of all perceived things","None of the mentioned"],
+ ans:2,
+ exp:"The percept sequence is the COMPLETE HISTORY of everything the agent has perceived. It is important because an agent's action at any time can depend on the entire percept sequence, not just the current input."},
+
+{id:8,topic:"Search",diff:"easy",
+ q:"Which action sequences are used to achieve the agent's goal?",
+ opts:["Search only","Plan only","Retrieve only","Both Search and Plan"],
+ ans:3,
+ exp:"Goal-based agents use BOTH search (to explore possible sequences of actions) AND planning (to select the optimal sequence). Search finds possibilities; planning organizes them into a strategy."},
+
+{id:9,topic:"Agents & AI Basics",diff:"medium",
+ q:"How many main types of agents are described in AI (Russell & Norvig)?",
+ opts:["2","3","4","5"],
+ ans:3,
+ exp:"Russell & Norvig describe 5 agent types: (1) Simple Reflex, (2) Model-Based Reflex, (3) Goal-Based, (4) Utility-Based, and (5) Learning Agents. Some curricula group these as 4 (excluding learning as a separate type)."},
+
+{id:10,topic:"Agents & AI Basics",diff:"easy",
+ q:"What is the rule that governs a simple reflex agent?",
+ opts:["Simple-action rule","Condition-action rule","Simple & Condition-action rule","None of the mentioned"],
+ ans:1,
+ exp:"Simple reflex agents use CONDITION-ACTION rules (also called if-then rules): 'IF the car ahead is braking, THEN apply the brakes.' The agent checks the condition and fires the corresponding action."},
+
+{id:11,topic:"Expert Systems & Fuzzy Logic",diff:"medium",
+ q:"In fuzzy logic, the values of set membership are represented by:",
+ opts:["Discrete Set","Degree of truth","Binary values only","Both Degree of truth and Probabilities"],
+ ans:1,
+ exp:"Fuzzy set membership values are represented by DEGREES OF TRUTH — real numbers between 0 and 1. A value of 1.0 = full membership, 0.5 = half-membership, 0 = non-membership."},
+
+{id:12,topic:"Agents & AI Basics",diff:"easy",
+ q:"What is the composition of an agent in AI?",
+ opts:["Program only","Architecture only","Both Program and Architecture","None of the mentioned"],
+ ans:2,
+ exp:"An agent = Architecture + Program. The ARCHITECTURE is the hardware/platform (sensors, actuators, processors). The PROGRAM implements the agent function — the logic that maps percepts to actions."},
+
+{id:13,topic:"Search",diff:"easy",
+ q:"A problem in a search space is defined by which states?",
+ opts:["Initial state only","Last (Goal) state only","Intermediate states only","All of the mentioned (Initial, Intermediate, Goal)"],
+ ans:3,
+ exp:"A search problem is completely defined by: (1) INITIAL STATE — where the agent starts; (2) GOAL STATE — where it wants to reach; (3) INTERMEDIATE STATES — all states explored during search; plus actions and transition model."},
+
+{id:14,topic:"Agents & AI Basics",diff:"medium",
+ q:"Which component of a learning agent modifies the performance element to make better decisions?",
+ opts:["Performance element","Changing element","Learning element","Critic"],
+ ans:2,
+ exp:"In a learning agent: the LEARNING ELEMENT makes improvements to the agent. The CRITIC provides feedback. The PERFORMANCE ELEMENT selects actions. The learning element uses critic feedback to update the performance element."},
+
+{id:15,topic:"Agents & AI Basics",diff:"easy",
+ q:"Which component is used to improve an agent's performance over time?",
+ opts:["Perceiving","Learning","Observing","None of the mentioned"],
+ ans:1,
+ exp:"LEARNING enables agents to improve from experience. A learning agent has a Learning Element that uses feedback from a Critic to modify the Performance Element, making future decisions better."},
+
+{id:16,topic:"Search",diff:"medium",
+ q:"What are the major components for measuring the performance of problem solving?",
+ opts:["Completeness only","Optimality only","Time and Space complexity only","All: Completeness, Optimality, Time complexity, Space complexity"],
+ ans:3,
+ exp:"Search algorithms are evaluated on 4 criteria: COMPLETENESS (will it find a solution if one exists?), OPTIMALITY (is it the best solution?), TIME COMPLEXITY (how long?), SPACE COMPLEXITY (how much memory?)."},
+
+{id:17,topic:"Expert Systems & Fuzzy Logic",diff:"medium",
+ q:"A production rule in an expert system consists of:",
+ opts:["A set of rules only","A sequence of steps only","A set of rules AND a sequence of steps","Arbitrary representation to a problem"],
+ ans:2,
+ exp:"A production rule (also called a 'production') has TWO parts: (1) the IF part (condition/premise) — the set of rules or conditions; and (2) the THEN part (action/consequence) — the sequence of steps or actions to take."},
+
+{id:18,topic:"Agents & AI Basics",diff:"easy",
+ q:"What takes place as an agent observes its interactions with the world over time?",
+ opts:["Learning","Hearing","Perceiving","Speech"],
+ ans:0,
+ exp:"As an agent interacts with the environment over time, it accumulates experience. This experience is what enables LEARNING — adjusting behavior based on past observations to improve future performance."},
+
+{id:19,topic:"Agents & AI Basics",diff:"hard",
+ q:"How many concerns are involved in the design of a learning element?",
+ opts:["1","2","3","4"],
+ ans:2,
+ exp:"The design of a learning element involves 3 main concerns: (1) What COMPONENT of the agent to improve; (2) What FEEDBACK is available (rewards, corrections); (3) What REPRESENTATION is used to encode knowledge."},
+
+{id:20,topic:"Machine Learning",diff:"medium",
+ q:"How does a decision tree reach its classification decision?",
+ opts:["Single test at each node","Two tests simultaneously","A sequence of tests from root to leaf","No test — random guess"],
+ ans:2,
+ exp:"A decision tree reaches a decision by performing a SEQUENCE OF TESTS — starting at the root, applying a test (feature comparison) at each node, following the appropriate branch, until reaching a leaf node with the final classification."},
+
+/* ── DEFINITIONS & HISTORY ── */
+{id:21,topic:"Agents & AI Basics",diff:"easy",
+ q:"Who coined the term 'Artificial Intelligence' and when?",
+ opts:["Alan Turing, 1950","John McCarthy, 1956","Marvin Minsky, 1951","Arthur Samuel, 1959"],
+ ans:1,
+ exp:"JOHN McCARTHY coined the term 'Artificial Intelligence' at the Dartmouth Conference in 1956. He also invented the LISP programming language in 1958. He is known as the 'father of AI'."},
+
+{id:22,topic:"Agents & AI Basics",diff:"easy",
+ q:"The Turing Test was proposed by Alan Turing in which paper?",
+ opts:["Can Machines Think? (1948)","Computing Machinery and Intelligence (1950)","Artificial Intelligence (1956)","The Computer and the Brain (1958)"],
+ ans:1,
+ exp:"Alan Turing proposed the Turing Test in his 1950 paper 'Computing Machinery and Intelligence'. He replaced the question 'Can machines think?' with an operational test: if a human interrogator cannot distinguish the machine from a human in text conversation, the machine passes."},
+
+{id:23,topic:"Agents & AI Basics",diff:"medium",
+ q:"The PEAS framework stands for:",
+ opts:["Program, Execution, Actions, Sensors","Performance, Environment, Actuators, Sensors","Perceive, Evaluate, Act, Sense","Planning, Execution, Analysis, Search"],
+ ans:1,
+ exp:"PEAS = Performance measure + Environment + Actuators + Sensors. It is the standard framework for specifying the task environment of an intelligent agent. Before designing an agent, you must specify its PEAS description."},
+
+{id:24,topic:"Agents & AI Basics",diff:"medium",
+ q:"Which of the following correctly describes a FULLY OBSERVABLE environment?",
+ opts:["Agent has partial sensor access","Agent can access the complete state of the environment at any time","Agent has no sensors","Environment changes while agent deliberates"],
+ ans:1,
+ exp:"A FULLY OBSERVABLE environment means the agent's sensors give it access to the complete state of the environment at every point in time. Chess is fully observable; poker is not (hidden cards = partially observable)."},
+
+{id:25,topic:"Agents & AI Basics",diff:"medium",
+ q:"In a STOCHASTIC environment, the next state is:",
+ opts:["Fully determined by the current state and action","Not fully predictable — involves randomness","Always the same regardless of action","Determined by other agents only"],
+ ans:1,
+ exp:"A STOCHASTIC environment has outcomes that cannot be fully predicted — there is randomness involved. For example, a robot's actions may produce uncertain physical outcomes. The opposite is DETERMINISTIC, where the next state is completely determined by current state + action."},
+
+{id:26,topic:"Machine Learning",diff:"easy",
+ q:"Arthur Samuel (1959) defined Machine Learning as:",
+ opts:["Programming computers with explicit rules","The field that gives computers the ability to learn without being explicitly programmed","Neural networks that mimic the brain","Algorithmic decision making"],
+ ans:1,
+ exp:"Arthur Samuel (1959): 'Machine learning is the field of study that gives computers the ability to learn without being explicitly programmed.' This is the classic informal definition that distinguishes ML from traditional rule-based programming."},
+
+{id:27,topic:"Machine Learning",diff:"easy",
+ q:"In Tom Mitchell's (1997) formal definition of ML, a program learns from experience E with respect to task T measured by performance P if:",
+ opts:["P improves with more code","Its performance at T improves with experience E","T decreases as E increases","P remains constant regardless of E"],
+ ans:1,
+ exp:"Tom Mitchell's formal definition: 'A program learns from experience E w.r.t. task T measured by P, if its performance at T, as measured by P, IMPROVES with experience E.' Example: E=games played, T=play chess, P=win rate."},
+
+{id:28,topic:"Machine Learning",diff:"easy",
+ q:"In traditional programming vs machine learning, what is the key difference?",
+ opts:["Traditional uses data, ML uses rules","Traditional: Data + Program → Output; ML: Data + Output → Program","Both are the same approach","ML uses more CPU resources only"],
+ ans:1,
+ exp:"Traditional programming: You write rules (program) + give data → get output. Machine Learning: You give data + desired outputs (labels) → the algorithm learns the program/model automatically. ML finds patterns rather than following hand-coded rules."},
+
+{id:29,topic:"Machine Learning",diff:"easy",
+ q:"Which machine learning paradigm uses labeled training data?",
+ opts:["Unsupervised Learning","Reinforcement Learning","Supervised Learning","Self-supervised Learning"],
+ ans:2,
+ exp:"SUPERVISED LEARNING uses labeled training data — pairs of inputs (X) and correct outputs (Y). The algorithm learns the mapping f: X → Y. Examples: classification (discrete Y) and regression (continuous Y)."},
+
+{id:30,topic:"Machine Learning",diff:"easy",
+ q:"K-Means Clustering is an example of which ML paradigm?",
+ opts:["Supervised Learning","Reinforcement Learning","Deep Learning","Unsupervised Learning"],
+ ans:3,
+ exp:"K-Means is UNSUPERVISED learning — it works on unlabeled data (no Y values). It groups similar data points into clusters without being told what the correct groupings are. Other unsupervised methods: PCA, hierarchical clustering, anomaly detection."},
+
+{id:31,topic:"Machine Learning",diff:"medium",
+ q:"In Reinforcement Learning, the agent learns by:",
+ opts:["Studying labeled examples","Receiving rewards and penalties from the environment","Clustering similar data points","Reducing dimensionality of data"],
+ ans:1,
+ exp:"RL agents learn through trial-and-error interaction with the environment. They receive REWARDS (positive feedback) for good actions and PENALTIES (negative reward) for bad actions. The goal is to maximize cumulative reward over time."},
+
+{id:32,topic:"Machine Learning",diff:"medium",
+ q:"A model with high training accuracy but low test accuracy is suffering from:",
+ opts:["Underfitting","Overfitting","Good generalization","High bias"],
+ ans:1,
+ exp:"OVERFITTING occurs when a model is too complex and memorizes training data (including noise) rather than learning general patterns. Result: high training accuracy, low test accuracy. Fixes: regularization, more training data, simpler model, cross-validation."},
+
+{id:33,topic:"Machine Learning",diff:"medium",
+ q:"A model that performs poorly on BOTH training and test data is suffering from:",
+ opts:["Overfitting","Good generalization","Underfitting","Data leakage"],
+ ans:2,
+ exp:"UNDERFITTING occurs when the model is too simple to capture the underlying patterns. It has HIGH BIAS and LOW VARIANCE. Result: poor accuracy on both training and test data. Fixes: use a more complex model, add more features, reduce regularization."},
+
+{id:34,topic:"Machine Learning",diff:"medium",
+ q:"In k-fold cross-validation with k=5, how many times is the model trained?",
+ opts:["1","3","5","10"],
+ ans:2,
+ exp:"In 5-fold cross-validation, data is split into 5 equal folds. The model is trained 5 times — each time using 4 folds for training and 1 fold for testing (each fold serves as the test set exactly once). Final score = average of 5 results."},
+
+{id:35,topic:"Evaluation",diff:"medium",
+ q:"Which metric is the harmonic mean of Precision and Recall?",
+ opts:["Accuracy","AUC-ROC","F1 Score","Specificity"],
+ ans:2,
+ exp:"F1 Score = 2 × (Precision × Recall) / (Precision + Recall). The harmonic mean gives equal weight to both Precision and Recall and is lower when either metric is low. Useful for imbalanced datasets where accuracy can be misleading."},
+
+{id:36,topic:"Evaluation",diff:"medium",
+ q:"Precision is defined as:",
+ opts:["TP / (TP + FN)","TP / (TP + FP)","TN / (TN + FP)","(TP + TN) / Total"],
+ ans:1,
+ exp:"PRECISION = TP / (TP + FP). It answers: 'Of all the instances the model predicted as positive, what fraction was actually positive?' High precision = few false alarms. Also called Positive Predictive Value (PPV)."},
+
+{id:37,topic:"Evaluation",diff:"medium",
+ q:"Recall (Sensitivity) is defined as:",
+ opts:["TP / (TP + FP)","TP / (TP + FN)","TN / (TN + FP)","(TP + TN) / Total"],
+ ans:1,
+ exp:"RECALL = TP / (TP + FN). It answers: 'Of all actual positive instances, what fraction did the model correctly identify?' High recall = few missed positives. Also called Sensitivity or True Positive Rate (TPR)."},
+
+{id:38,topic:"Evaluation",diff:"easy",
+ q:"In the Iris dataset, how many classes (species) are there?",
+ opts:["2","3","4","5"],
+ ans:1,
+ exp:"The Iris dataset has 3 classes: Iris SETOSA (0), Iris VERSICOLOR (1), and Iris VIRGINICA (2). It contains 150 samples total (50 per class) with 4 features: sepal length, sepal width, petal length, petal width."},
+
+{id:39,topic:"Machine Learning",diff:"medium",
+ q:"The sigmoid function σ(z) = 1/(1 + e^(-z)) outputs values in the range:",
+ opts:["(-∞, +∞)","(-1, 1)","(0, 1)","[0, 100]"],
+ ans:2,
+ exp:"The sigmoid function maps any real number to the OPEN INTERVAL (0, 1). As z→+∞, σ(z)→1; as z→-∞, σ(z)→0; at z=0, σ(z)=0.5. This makes it ideal for outputting probabilities in logistic regression."},
+
+{id:40,topic:"Machine Learning",diff:"medium",
+ q:"Which kernel is most commonly used in SVM for non-linearly separable data?",
+ opts:["Linear Kernel","Polynomial Kernel","RBF (Radial Basis Function) Kernel","Sigmoid Kernel"],
+ ans:2,
+ exp:"The RBF (Radial Basis Function) or Gaussian kernel K(x,y) = exp(-γ||x-y||²) is the most widely used kernel for non-linear SVM. It maps data into an infinite-dimensional space and works well in many practical situations. γ controls the influence radius of each support vector."},
+
+/* ── SCIKIT-LEARN ── */
+{id:41,topic:"Scikit-Learn",diff:"easy",
+ q:"In scikit-learn, which function splits data into training and test sets?",
+ opts:["split_data()","divide_data()","train_test_split()","data_split()"],
+ ans:2,
+ exp:"sklearn.model_selection.train_test_split(X, y, test_size=0.2, random_state=42) is the standard function. test_size=0.2 means 20% goes to testing. random_state ensures reproducibility (same split every run)."},
+
+{id:42,topic:"Scikit-Learn",diff:"medium",
+ q:"Why should you use fit_transform() on training data but ONLY transform() on test data?",
+ opts:["It's just a coding convention with no practical effect","To prevent data leakage — test data must not influence the preprocessing parameters","transform() is faster than fit_transform()","fit_transform() only works on training data"],
+ ans:1,
+ exp:"DATA LEAKAGE prevention: fit_transform() computes statistics (mean, std) FROM the data AND applies the transform. On test data, you must only APPLY (transform), using statistics learned from training data only. If you fit on test data too, test information contaminates your model — inflating performance estimates."},
+
+{id:43,topic:"Scikit-Learn",diff:"easy",
+ q:"Which sklearn preprocessing class scales features to zero mean and unit variance?",
+ opts:["MinMaxScaler","RobustScaler","StandardScaler","Normalizer"],
+ ans:2,
+ exp:"StandardScaler transforms each feature: z = (x - mean) / std. Result: mean=0, standard deviation=1. Important for algorithms sensitive to feature scale (KNN, SVM, neural networks). MinMaxScaler scales to [0,1]; RobustScaler uses median and IQR (better for outliers)."},
+
+{id:44,topic:"Scikit-Learn",diff:"medium",
+ q:"The decision tree algorithm implemented in scikit-learn is:",
+ opts:["ID3","C4.5","CART","C5.0"],
+ ans:2,
+ exp:"Scikit-learn uses CART (Classification and Regression Trees). CART: (1) Creates binary trees (always exactly 2 splits per node), (2) Uses Gini Impurity for classification and MSE for regression, (3) Supports both classification and regression, (4) Allows post-pruning via ccp_alpha."},
+
+{id:45,topic:"Scikit-Learn",diff:"medium",
+ q:"In Random Forest, n_estimators refers to:",
+ opts:["The maximum depth of each tree","The number of trees in the forest","The number of features to consider","The minimum samples per leaf"],
+ ans:1,
+ exp:"n_estimators = NUMBER OF TREES in the random forest. More trees generally = better performance (up to a point) but slower training and prediction. Common defaults: 100–500 trees. Each tree is trained on a different bootstrap sample."},
+
+{id:46,topic:"Scikit-Learn",diff:"medium",
+ q:"In the standard sklearn workflow, what is the correct order?",
+ opts:["predict → fit → transform","fit → transform → predict","Load data → Split → Preprocess → Train → Predict → Evaluate","Train → Split → Preprocess → Evaluate"],
+ ans:2,
+ exp:"Standard sklearn workflow: (1) Load data, (2) Split into train/test, (3) Preprocess (fit_transform on train, transform on test), (4) Train model (fit), (5) Predict (predict), (6) Evaluate (accuracy_score, classification_report). Never preprocess before splitting!"},
+
+{id:47,topic:"Evaluation",diff:"hard",
+ q:"Which sklearn function provides a table showing precision, recall, F1-score, and support for each class?",
+ opts:["accuracy_score()","confusion_matrix()","classification_report()","roc_auc_score()"],
+ ans:2,
+ exp:"classification_report(y_test, y_pred) outputs a formatted table with: PRECISION (accuracy of positive predictions), RECALL (coverage of actual positives), F1-SCORE (harmonic mean), and SUPPORT (number of test samples per class). Also shows macro and weighted averages."},
+
+{id:48,topic:"Scikit-Learn",diff:"medium",
+ q:"The Elbow Method is used to determine:",
+ opts:["The optimal learning rate","The optimal number of clusters (k) in K-Means","The best depth for a decision tree","The optimal C parameter in SVM"],
+ ans:1,
+ exp:"The Elbow Method plots INERTIA (sum of squared distances from cluster centers) vs. number of clusters k. The 'elbow' point where inertia stops decreasing sharply indicates the optimal k. Beyond the elbow, adding more clusters gives diminishing returns."},
+
+{id:49,topic:"Machine Learning",diff:"hard",
+ q:"Which ensemble method trains models SEQUENTIALLY, with each model correcting errors of the previous?",
+ opts:["Bagging","Random Forest","Stacking","Boosting"],
+ ans:3,
+ exp:"BOOSTING trains models sequentially. Each new model focuses on examples the previous model got wrong (by increasing their weights). Examples: AdaBoost, Gradient Boosting, XGBoost. Bagging trains models independently in parallel. Boosting reduces BIAS; bagging reduces VARIANCE."},
+
+{id:50,topic:"Expert Systems & Fuzzy Logic",diff:"medium",
+ q:"An expert system's KNOWLEDGE BASE contains:",
+ opts:["Only numerical data","Facts and rules about a specific domain","The user interface","The inference mechanism"],
+ ans:1,
+ exp:"An expert system's KNOWLEDGE BASE stores domain-specific knowledge as: (1) FACTS — known information about the domain, and (2) RULES — if-then production rules. The Inference Engine uses this knowledge base to derive new facts and reach conclusions."}
+];
+
+// ─── TRUE / FALSE DATA ───
+const tfData = [
+{id:21,
+ stmt:"A knowledge-based agent can combine general knowledge with current percepts to infer hidden aspects of the current state prior to selecting actions.",
+ ans:true,
+ exp:"TRUE. A knowledge-based agent maintains a KNOWLEDGE BASE representing facts about the world. It uses this internal knowledge combined with current sensor inputs to INFER hidden state information — things it cannot directly observe. This is what distinguishes it from a simple reflex agent."},
+
+{id:22,
+ stmt:"A solution to a problem is a path from the initial state to a goal state. Solution quality is measured by the path cost function, and an OPTIMAL solution has the HIGHEST path cost among all solutions.",
+ ans:false,
+ exp:"FALSE. An OPTIMAL solution has the LOWEST (minimum) path cost, not the highest. We want to reach the goal as cheaply/efficiently as possible. The path cost function assigns costs to paths; optimal solutions minimize this cost."},
+
+{id:23,
+ stmt:"IR (Information Retrieval) and IE (Information Extraction) are the same thing.",
+ ans:false,
+ exp:"FALSE. They are DIFFERENT NLP tasks. IR (Information Retrieval) finds relevant documents matching a query (e.g., web search). IE (Information Extraction) extracts structured information (entities, relationships, events) from unstructured text (e.g., extracting names and dates from articles)."},
+
+{id:24,
+ stmt:"Like relational databases, there exist fuzzy relational databases that handle imprecise and uncertain data.",
+ ans:true,
+ exp:"TRUE. Fuzzy relational databases extend traditional relational databases by allowing imprecise, uncertain, or vague data using fuzzy set theory. Membership values replace the binary IS/IS-NOT membership of traditional databases, allowing for partial matches and uncertain data."},
+
+{id:25,
+ stmt:"Traditional (classical) set theory is also known as Crispy Set theory (or Crisp Set theory).",
+ ans:true,
+ exp:"TRUE. Classical Boolean set theory uses CRISP sets — an element either belongs (1) or doesn't belong (0) to a set. It is called 'crisp' to contrast it with FUZZY sets which allow partial membership values between 0 and 1."},
+
+{id:26,
+ stmt:"The problem-solving agent, when faced with several immediate options of unknown value, looks for sequences of actions that lead to states of known value — this process of looking for such a sequence is called Search.",
+ ans:true,
+ exp:"TRUE. This is the definition of SEARCH in AI. When immediate outcomes are unknown, the agent uses search to evaluate sequences of actions, explore the state space, and find a path to a goal state. Search is fundamental to problem-solving agents."},
+
+{id:27,
+ stmt:"An inference algorithm that derives ONLY entailed sentences (never produces conclusions not supported by the knowledge base) is called SOUND or truth-preserving.",
+ ans:true,
+ exp:"TRUE. SOUNDNESS means: if the algorithm concludes something, that conclusion must logically follow from the knowledge base (it is entailed). A sound algorithm never derives false conclusions. COMPLETENESS means it can derive ALL entailed sentences. Both are desirable properties."},
+
+{id:28,
+ stmt:"An algorithm is COMPLETE if it terminates with a solution whenever one exists.",
+ ans:true,
+ exp:"TRUE. COMPLETENESS in search: an algorithm is complete if it GUARANTEES to find a solution when one exists (and correctly reports failure when none exists). BFS is complete for finite state spaces. DFS is NOT complete (can loop infinitely). A* is complete."},
+
+{id:29,
+ stmt:"NLP (Natural Language Processing) is concerned with the interactions between computers and human (natural) languages, enabling computers to understand, interpret, and generate human language.",
+ ans:true,
+ exp:"TRUE. NLP is a subfield of AI focused on interactions between computers and natural languages (English, French, etc.). Tasks include: text classification, sentiment analysis, machine translation, question answering, named entity recognition, and text summarization."},
+
+{id:30,
+ stmt:"Named Entity Recognition (NER) determines which pronoun maps to which noun (i.e., resolves pronoun references).",
+ ans:false,
+ exp:"FALSE. NER identifies and classifies NAMED ENTITIES in text (persons, organizations, locations, dates, etc.). For example, in 'Apple Inc. was founded in Cupertino', NER identifies 'Apple Inc.' as an ORGANIZATION and 'Cupertino' as a LOCATION. The task of resolving pronouns to their referents is called COREFERENCE RESOLUTION."}
+];
+
+// ─── WRITING QUESTIONS DATA ───
+const writingData = [
+/* SECTION B – Q1 */
+{id:1, section:"Section B - Q1", marks:3, type:"compare",
+ q:"What is the difference between <strong>Programming with Artificial Intelligence</strong> and <strong>Programming without Artificial Intelligence</strong>?",
+ answer:`<ul>
+  <li><strong>Without AI:</strong> The programmer explicitly codes every rule, decision, and logic. The system follows fixed, pre-defined instructions. It cannot handle situations not anticipated by the programmer. Example: a calculator always does exactly what the code says.</li>
+  <li><strong>With AI:</strong> The system is designed to learn, reason, and adapt. Instead of explicit rules, the system uses data, inference, or learning to handle new situations. Example: a spam filter learns from examples rather than following hard-coded keyword rules.</li>
+  <li><strong>Key difference:</strong> AI programs can handle uncertainty, learn from experience, and improve over time. Non-AI programs are static and can only do exactly what they were programmed to do.</li>
+</ul>`},
+
+{id:2, section:"Section B - Q1", marks:3, type:"compare",
+ q:"Distinguish between <strong>Inductive Reasoning</strong> and <strong>Deductive Reasoning</strong> in the context of AI.",
+ answer:`<ul>
+  <li><strong>Deductive Reasoning:</strong> Starts with general premises/rules and derives specific conclusions. If the premises are true, the conclusion MUST be true. Example: "All men are mortal. Socrates is a man. Therefore, Socrates is mortal." Used in logic-based AI systems.</li>
+  <li><strong>Inductive Reasoning:</strong> Starts with specific observations and derives general conclusions/patterns. Conclusions are probable but not guaranteed. Example: "Every swan I've seen is white. Therefore, all swans are white." Used in machine learning (generalizing from training examples).</li>
+  <li><strong>Key difference:</strong> Deductive is top-down (general → specific, certain); Inductive is bottom-up (specific → general, probable). ML primarily uses inductive reasoning.</li>
+</ul>`},
+
+{id:3, section:"Section B - Q1", marks:3, type:"compare",
+ q:"Compare <strong>Human Intelligence</strong> and <strong>Machine Intelligence</strong>.",
+ answer:`<ul>
+  <li><strong>Human Intelligence:</strong> Biological, embodied in the brain. Learns from very few examples (one-shot learning). Handles ambiguity, emotion, and context naturally. Creative and flexible. Can generalize across completely different domains. Degrades with fatigue.</li>
+  <li><strong>Machine Intelligence:</strong> Mathematical/computational. Requires large amounts of training data. Excels at narrow, well-defined tasks. Fast and consistent — no fatigue. Cannot easily transfer learning across domains. Currently lacks true understanding and common sense.</li>
+  <li><strong>Key areas where machines exceed humans:</strong> Speed, memory capacity, precision in repetitive tasks, chess, image recognition at scale.</li>
+  <li><strong>Key areas where humans exceed machines:</strong> Common sense reasoning, creativity, social understanding, learning from few examples.</li>
+</ul>`},
+
+{id:4, section:"Section B - Q1", marks:3, type:"explain",
+ q:"According to John McCarthy, AI is <em>'The science and engineering of making intelligent machines, especially intelligent computer programs.'</em> In your own words, explain what is meant by Artificial Intelligence.",
+ answer:`<p>Artificial Intelligence is the branch of computer science that focuses on creating systems (machines or software) that can perform tasks that would normally require human intelligence. These tasks include reasoning, learning from experience, understanding language, recognizing patterns, solving problems, and making decisions.</p>
+<p>Instead of being explicitly programmed with every possible answer, an AI system uses algorithms, data, and reasoning to figure out answers on its own. The goal is to build machines that can think, learn, and act intelligently — either like humans or in ways that achieve intelligent outcomes.</p>
+<p>AI ranges from simple rule-based systems (like a chess program following programmed strategies) to learning systems (like a recommendation engine that improves from user behavior).</p>`},
+
+{id:5, section:"Section B - Q1", marks:3, type:"list",
+ q:"What are the main goals of Artificial Intelligence?",
+ answer:`<ul>
+  <li><strong>Replicate human intelligence:</strong> Build systems that think and reason like humans (cognitive modeling approach).</li>
+  <li><strong>Rational behavior:</strong> Create agents that act rationally to achieve the best possible outcome given available information.</li>
+  <li><strong>Automate intelligent tasks:</strong> Automate activities that require intelligence: language understanding, visual perception, decision-making, problem-solving.</li>
+  <li><strong>Augment human capability:</strong> Assist humans in complex tasks they cannot easily do alone (medical diagnosis, scientific discovery).</li>
+  <li><strong>Learn from experience:</strong> Build systems that improve automatically from data without being explicitly reprogrammed.</li>
+  <li><strong>Solve complex problems:</strong> Handle problems too complex for traditional algorithms: game playing, robotics, natural language understanding.</li>
+</ul>`},
+
+/* SECTION B – Q2 */
+{id:6, section:"Section B - Q2", marks:3, type:"explain",
+ q:"Explain the term <strong>Intelligence</strong> as used in Artificial Intelligence.",
+ answer:`<p>Intelligence refers to the capacity to acquire and apply knowledge, reason about the world, solve novel problems, adapt to new situations, and achieve goals effectively.</p>
+<p>In AI, intelligence encompasses several key abilities:</p>
+<ul>
+  <li><strong>Reasoning:</strong> Drawing logical conclusions from available information.</li>
+  <li><strong>Learning:</strong> Improving performance from experience and data.</li>
+  <li><strong>Problem-solving:</strong> Finding solutions to complex, new problems.</li>
+  <li><strong>Perception:</strong> Understanding sensory inputs (vision, language).</li>
+  <li><strong>Communication:</strong> Understanding and generating natural language.</li>
+  <li><strong>Planning:</strong> Sequencing actions to achieve goals.</li>
+</ul>
+<p>Alan Turing operationalized intelligence through the Turing Test: a machine is considered intelligent if its behavior is indistinguishable from a human's in conversation.</p>`},
+
+{id:7, section:"Section B - Q2", marks:6, type:"list",
+ q:"Briefly discuss <strong>THREE (3)</strong> domains or subsets of Artificial Intelligence. [6 Marks: 2 Marks Each]",
+ answer:`<div class="sub-q">
+<div class="sub-label">1. Machine Learning (ML)</div>
+<p>A subset of AI where systems learn from data to improve their performance without being explicitly programmed. ML algorithms identify patterns in data and build models to make predictions or decisions. Examples: spam filters, recommendation systems, image classifiers.</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">2. Natural Language Processing (NLP)</div>
+<p>Enables computers to understand, interpret, and generate human language (text and speech). NLP bridges the gap between human communication and computer understanding. Examples: chatbots, Google Translate, Siri/Alexa, sentiment analysis, text summarization.</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">3. Computer Vision</div>
+<p>Enables machines to interpret and understand visual information from the world (images, videos). The system extracts meaningful information from pixels. Examples: facial recognition, self-driving car cameras, medical image diagnosis (detecting tumors in X-rays), object detection.</p>
+</div>`},
+
+{id:8, section:"Section B - Q2", marks:6, type:"list",
+ q:"Discuss <strong>THREE (3)</strong> components of intelligence, stating an example in each case. [6 Marks: 2 Marks Each]",
+ answer:`<div class="sub-q">
+<div class="sub-label">1. Reasoning</div>
+<p>The ability to draw logical conclusions from available information. Reasoning allows an agent to infer new facts from known facts. <strong>Example:</strong> A medical AI system reasons from symptoms and test results to diagnose a disease: "Patient has fever + cough + positive PCR → likely COVID-19."</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">2. Learning</div>
+<p>The ability to acquire new knowledge or improve performance from experience. Without learning, an intelligent system would remain static. <strong>Example:</strong> A spam filter learns from thousands of labeled emails (spam/not-spam) and improves its accuracy over time as it encounters more examples.</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">3. Perception</div>
+<p>The ability to take in raw sensory data and interpret it meaningfully. Intelligence requires understanding the environment. <strong>Example:</strong> A self-driving car's computer vision system perceives camera images and interprets them as road lanes, traffic lights, pedestrians, and other vehicles in real time.</p>
+</div>`},
+
+/* SECTION B – Q3 */
+{id:9, section:"Section B - Q3", marks:6, type:"explain",
+ q:"Provide a short explanation of <strong>Breadth-First Search (BFS)</strong> and <strong>Depth-First Search (DFS)</strong>, and state TWO areas or situations where each can be applied. [6 Marks: 2 Marks Each]",
+ answer:`<div class="sub-q">
+<div class="sub-label">Breadth-First Search (BFS)</div>
+<p>BFS explores the search tree level by level — all nodes at depth 1 first, then depth 2, and so on. It uses a QUEUE (FIFO) data structure. BFS is <strong>complete</strong> (always finds a solution if one exists) and <strong>optimal</strong> (finds the shallowest/shortest-path solution when all step costs are equal). Memory requirement: O(b^d).</p>
+<p><strong>Applications:</strong> (1) Finding the shortest path in a maze or network (GPS routing when all roads have equal cost). (2) Web crawling — exploring pages level by level from a starting URL. (3) Social network friend suggestions (finding people within k degrees of connection).</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">Depth-First Search (DFS)</div>
+<p>DFS explores as far as possible along each branch before backtracking. It uses a STACK (LIFO) data structure (or recursion). DFS is <strong>memory-efficient</strong> — O(bm) where m is the max depth. However, it is NOT guaranteed to be complete (can loop in infinite state spaces) or optimal.</p>
+<p><strong>Applications:</strong> (1) Solving puzzles like Sudoku or mazes where you explore one path completely before trying another. (2) Topological sorting and cycle detection in graphs. (3) Game tree exploration where you want to find any solution quickly.</p>
+</div>`},
+
+{id:10, section:"Section B - Q3", marks:6, type:"list",
+ q:"List and explain the <strong>THREE (3) main components</strong> of an Expert System (ES). [6 Marks: 2 Marks Each]",
+ answer:`<div class="sub-q">
+<div class="sub-label">1. Knowledge Base</div>
+<p>The core of the expert system — stores domain-specific knowledge in the form of FACTS (known truths about the domain) and RULES (if-then production rules derived from human experts). Example: "IF temperature > 38°C AND throat is red THEN possible bacterial infection." The quality of the knowledge base determines the system's effectiveness.</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">2. Inference Engine</div>
+<p>The "brain" of the expert system — applies logical rules to the knowledge base to derive new facts and reach conclusions. It uses two main strategies: FORWARD CHAINING (data-driven: starts with facts, applies rules until goal is reached) and BACKWARD CHAINING (goal-driven: starts with a hypothesis, works backwards to find supporting facts).</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">3. User Interface</div>
+<p>The communication layer between the expert system and the end user. It allows users to input queries, answer clarifying questions from the system, and receive explanations and conclusions. A good user interface makes the system accessible to non-experts and includes an EXPLANATION FACILITY that explains how the system reached its conclusion.</p>
+</div>`},
+
+{id:11, section:"Section B - Q3", marks:3, type:"list",
+ q:"Mention any THREE (3) limitations of an Expert System.",
+ answer:`<ul>
+  <li><strong>Knowledge Acquisition Bottleneck:</strong> Building the knowledge base requires extensive time with human experts. Experts often have difficulty articulating tacit knowledge ("expert intuition"). Updating the knowledge base as the domain evolves is expensive.</li>
+  <li><strong>Narrow Domain:</strong> Expert systems only work within their specific domain. They cannot handle queries outside their programmed knowledge area. They lack common sense and cannot apply knowledge from one domain to another.</li>
+  <li><strong>No Learning Ability:</strong> Traditional expert systems cannot learn from new cases or improve automatically. Unlike ML systems, they require manual updates to the knowledge base when new information becomes available.</li>
+  <li><strong>Poor with Uncertainty:</strong> Expert systems struggle with incomplete, inconsistent, or uncertain information. Real-world problems often involve ambiguity that rigid rule-based systems handle poorly.</li>
+  <li><strong>High Development Cost:</strong> Building a reliable expert system requires months/years of knowledge engineering, making it expensive and time-consuming to develop and maintain.</li>
+</ul>`},
+
+/* EXTRA PRACTICE */
+{id:12, section:"Extra Practice", marks:6, type:"explain",
+ q:"Describe the <strong>PEAS framework</strong> and apply it to an <strong>Automated Taxi Driver</strong> agent.",
+ answer:`<p>PEAS stands for <strong>Performance measure, Environment, Actuators, Sensors</strong>. It is used to specify the complete task environment of an intelligent agent before designing it.</p>
+<div class="sub-q">
+<div class="sub-label">For an Automated Taxi Driver:</div>
+</div>
+<ul>
+  <li><strong>Performance Measure:</strong> Safe trip (no accidents), fast arrival, legal driving (traffic laws obeyed), comfortable ride (smooth acceleration/braking), maximize profits, minimize fuel consumption.</li>
+  <li><strong>Environment:</strong> Roads, other vehicles, pedestrians, cyclists, traffic lights, road signs, weather conditions, passengers, GPS maps.</li>
+  <li><strong>Actuators:</strong> Steering wheel, accelerator pedal, brake pedal, indicator/turn signals, horn, gear shift, headlights.</li>
+  <li><strong>Sensors:</strong> Cameras (all directions), LIDAR/RADAR (distance sensing), GPS (location), speedometer (speed), odometer (distance), engine sensors (fuel, temperature), microphone (passenger commands).</li>
+</ul>`},
+
+{id:13, section:"Extra Practice", marks:6, type:"compare",
+ q:"Compare <strong>Supervised, Unsupervised, and Reinforcement Learning</strong> — including definitions, data requirements, and examples.",
+ answer:`<ul>
+  <li><strong>Supervised Learning:</strong> Learns from LABELED data (X, Y pairs). Algorithm maps inputs to known outputs. Goal: predict output for unseen data. Examples: Decision Trees, SVM, KNN for classification; Linear Regression for prediction. Use cases: spam detection, disease diagnosis, image classification.</li>
+  <li><strong>Unsupervised Learning:</strong> Learns from UNLABELED data (X only). Algorithm discovers hidden structure/patterns. No "correct answer" provided. Examples: K-Means (clustering), PCA (dimensionality reduction). Use cases: customer segmentation, anomaly detection, topic modeling.</li>
+  <li><strong>Reinforcement Learning:</strong> Agent learns through TRIAL AND ERROR by receiving REWARDS/PENALTIES from the environment. No pre-labeled data — learns from interaction. Examples: Q-Learning, Deep Q-Networks (DQN). Use cases: game playing (AlphaGo), robot control, autonomous driving.</li>
+</ul>
+<p><strong>Key comparison:</strong> Supervised needs labels (expensive); Unsupervised needs no labels; RL needs an environment to interact with.</p>`},
+
+{id:14, section:"Extra Practice", marks:4, type:"explain",
+ q:"Explain <strong>Overfitting</strong> and <strong>Underfitting</strong> in machine learning. How do you fix each?",
+ answer:`<div class="sub-q">
+<div class="sub-label">Overfitting</div>
+<p>Overfitting occurs when a model is too complex and memorizes the TRAINING DATA — including its noise and random fluctuations — rather than learning the underlying general pattern. Symptoms: very high training accuracy, significantly lower test accuracy. The model has HIGH VARIANCE (sensitive to small changes in training data).</p>
+<p><strong>Fixes:</strong> (1) Regularization (L1 Lasso / L2 Ridge), (2) Collect more training data, (3) Use simpler model (reduce max_depth for trees), (4) Dropout (neural networks), (5) Cross-validation, (6) Feature selection.</p>
+</div>
+<div class="sub-q">
+<div class="sub-label">Underfitting</div>
+<p>Underfitting occurs when the model is too SIMPLE to capture the underlying patterns. Symptoms: low accuracy on BOTH training and test data. The model has HIGH BIAS (makes wrong assumptions about the data).</p>
+<p><strong>Fixes:</strong> (1) Use a more complex/powerful model, (2) Add more features (feature engineering), (3) Reduce regularization strength, (4) Train for more iterations (neural networks), (5) Add polynomial features.</p>
+</div>`},
+
+{id:15, section:"Extra Practice", marks:5, type:"list",
+ q:"Describe the <strong>five (5) types of agents</strong> in Artificial Intelligence, from simplest to most complex.",
+ answer:`<ul>
+  <li><strong>1. Simple Reflex Agent:</strong> Acts on the current percept only — ignores history. Uses condition-action rules (IF condition THEN action). Works only in fully observable environments. Example: thermostat (IF temp < 20°C THEN turn on heater).</li>
+  <li><strong>2. Model-Based Reflex Agent:</strong> Maintains an INTERNAL STATE (world model) to handle partial observability. Tracks how the world changes over time. Example: robot vacuum that maps which areas it has already cleaned.</li>
+  <li><strong>3. Goal-Based Agent:</strong> Has explicit GOALS and uses search/planning to find action sequences that achieve those goals. More flexible than reflex agents — can handle new goals without reprogramming. Example: GPS navigation agent planning a route.</li>
+  <li><strong>4. Utility-Based Agent:</strong> Uses a UTILITY FUNCTION to measure how desirable each state is. When multiple goals conflict or there is uncertainty, the agent chooses actions that maximize expected utility. Example: self-driving car balancing speed vs. safety vs. comfort.</li>
+  <li><strong>5. Learning Agent:</strong> Can IMPROVE its performance over time through experience. Has four components: Learning Element (makes improvements), Performance Element (takes actions), Critic (evaluates performance), Problem Generator (suggests exploratory actions).</li>
+</ul>`}
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const state = {
+  mcqAnswers: {},  // id -> {selected, correct}
+  tfAnswers: {},   // id -> {selected, correct}
+};
+
+// ═══════════════════════════════════════════════
+// PAGE NAVIGATION
+// ═══════════════════════════════════════════════
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+name+"'"))
+      b.classList.add('active');
+  });
+  if(name==='results') updateResults();
+}
+
+// ═══════════════════════════════════════════════
+// MCQ
+// ═══════════════════════════════════════════════
+function renderMCQ(){
+  const topic = document.getElementById('topicFilter').value;
+  const diff  = document.getElementById('diffFilter').value;
+  let filtered = mcqData.filter(q =>
+    (topic==='all' || q.topic===topic) &&
+    (diff==='all'  || q.diff===diff)
+  );
+  updateMCQProgress(filtered);
+  const c = document.getElementById('mcqContainer');
+  if(!filtered.length){
+    c.innerHTML = '<div class="empty"><div class="icon">🔍</div><p>No questions match the selected filters.</p></div>';
+    return;
+  }
+  c.innerHTML = filtered.map((q,i) => {
+    const saved = state.mcqAnswers[q.id];
+    const cardClass = saved ? (saved.correct ? 'answered-correct' : 'answered-wrong') : '';
+    return `<div class="q-card ${cardClass}" id="qcard-${q.id}">
+      <div class="q-meta">
+        <span class="q-num">Q${q.id}</span>
+        <span class="q-topic">${q.topic}</span>
+        <span class="q-diff ${q.diff}">${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((opt,oi)=>{
+          let cls = '';
+          if(saved){
+            if(oi===q.ans) cls='correct';
+            else if(oi===saved.selected && !saved.correct) cls='wrong';
+            else cls='disabled';
+          }
+          return `<div class="opt ${cls} ${saved?'disabled':''}" onclick="answerMCQ(${q.id},${oi})" id="opt-${q.id}-${oi}">
+            <div class="opt-letter">${['A','B','C','D'][oi]}</div>
+            <div class="opt-text">${opt}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="feedback ${saved?(saved.correct?'correct':'wrong'):''} ${saved?'show':''}" id="fb-${q.id}">
+        <div class="feedback-header">${saved?(saved.correct?'✅ Correct!':'❌ Incorrect'):''}</div>
+        <div class="feedback-body">${saved?q.exp:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function answerMCQ(id, selected){
+  if(state.mcqAnswers[id]) return;
+  const q = mcqData.find(q=>q.id===id);
+  const correct = selected===q.ans;
+  state.mcqAnswers[id] = {selected, correct};
+
+  // Update option styles
+  q.opts.forEach((_,oi)=>{
+    const el = document.getElementById(`opt-${id}-${oi}`);
+    el.classList.add('disabled');
+    if(oi===q.ans) el.classList.add('correct');
+    else if(oi===selected && !correct) el.classList.add('wrong');
+  });
+
+  // Show feedback
+  const fb = document.getElementById(`fb-${id}`);
+  fb.className = `feedback ${correct?'correct':'wrong'} show`;
+  fb.innerHTML = `<div class="feedback-header">${correct?'✅ Correct!':'❌ Incorrect'}</div>
+    <div class="feedback-body">${q.exp}</div>`;
+
+  // Update card border
+  const card = document.getElementById(`qcard-${id}`);
+  card.classList.add(correct?'answered-correct':'answered-wrong');
+
+  // Update progress
+  const topic = document.getElementById('topicFilter').value;
+  const diff  = document.getElementById('diffFilter').value;
+  const filtered = mcqData.filter(q=>(topic==='all'||q.topic===topic)&&(diff==='all'||q.diff===diff));
+  updateMCQProgress(filtered);
+}
+
+function updateMCQProgress(filtered){
+  const answered = filtered.filter(q=>state.mcqAnswers[q.id]);
+  const correct  = answered.filter(q=>state.mcqAnswers[q.id].correct);
+  document.getElementById('mcqProgress').textContent = `${answered.length} / ${filtered.length} answered`;
+  const pct = answered.length ? Math.round(correct.length/answered.length*100) : 0;
+  document.getElementById('mcqScore').textContent = `Score: ${pct}%`;
+}
+
+function resetMCQ(){
+  state.mcqAnswers = {};
+  renderMCQ();
+}
+
+// ═══════════════════════════════════════════════
+// TRUE / FALSE
+// ═══════════════════════════════════════════════
+function renderTF(){
+  const c = document.getElementById('tfContainer');
+  c.innerHTML = tfData.map(q=>{
+    const saved = state.tfAnswers[q.id];
+    const cardClass = saved ? (saved.correct?'answered-correct':'answered-wrong') : '';
+    const selT = saved && saved.selected===true;
+    const selF = saved && saved.selected===false;
+    return `<div class="tf-card ${cardClass}" id="tfcard-${q.id}">
+      <div class="q-meta">
+        <span class="q-num">Q${q.id}</span>
+        <span class="q-topic">True / False</span>
+      </div>
+      <div class="tf-statement">${q.stmt}</div>
+      <div class="tf-btns">
+        <button class="tf-btn true-btn ${selT?(q.ans?'selected-true':'selected-false'):''} ${saved?'disabled':''} ${saved&&q.ans?'revealed-true':''}"
+          onclick="answerTF(${q.id},true)">TRUE</button>
+        <button class="tf-btn false-btn ${selF?(!q.ans?'selected-false':'selected-true'):''} ${saved?'disabled':''} ${saved&&!q.ans?'revealed-false':''}"
+          onclick="answerTF(${q.id},false)">FALSE</button>
+      </div>
+      <div class="feedback ${saved?(saved.correct?'correct':'wrong'):''} ${saved?'show':''}" id="tffb-${q.id}">
+        <div class="feedback-header">${saved?(saved.correct?'✅ Correct!':'❌ Incorrect'):''}</div>
+        <div class="feedback-body">${saved?`<strong>Answer: ${q.ans?'TRUE':'FALSE'}</strong> — ${q.exp}`:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+  updateTFProgress();
+}
+
+function answerTF(id, selected){
+  if(state.tfAnswers[id]) return;
+  const q = tfData.find(q=>q.id===id);
+  const correct = selected===q.ans;
+  state.tfAnswers[id]={selected,correct};
+  const fb = document.getElementById(`tffb-${id}`);
+  fb.className=`feedback ${correct?'correct':'wrong'} show`;
+  fb.innerHTML=`<div class="feedback-header">${correct?'✅ Correct!':'❌ Incorrect'}</div>
+    <div class="feedback-body"><strong>Answer: ${q.ans?'TRUE':'FALSE'}</strong> — ${q.exp}</div>`;
+  const card = document.getElementById(`tfcard-${id}`);
+  card.classList.add(correct?'answered-correct':'answered-wrong');
+  // Disable buttons
+  card.querySelectorAll('.tf-btn').forEach(b=>{
+    b.classList.add('disabled');
+    b.onclick=null;
+  });
+  updateTFProgress();
+}
+
+function updateTFProgress(){
+  const answered = Object.keys(state.tfAnswers).length;
+  const correct  = Object.values(state.tfAnswers).filter(a=>a.correct).length;
+  document.getElementById('tfProgress').textContent = `${answered} / ${tfData.length} answered`;
+  const pct = answered ? Math.round(correct/answered*100) : 0;
+  document.getElementById('tfScore').textContent = `Score: ${pct}%`;
+}
+
+function resetTF(){
+  state.tfAnswers={};
+  renderTF();
+}
+
+// ═══════════════════════════════════════════════
+// WRITING
+// ═══════════════════════════════════════════════
+function renderWriting(){
+  const sec = document.getElementById('writingFilter').value;
+  const filtered = writingData.filter(q=>sec==='all'||q.section===sec);
+  const c = document.getElementById('writingContainer');
+  if(!filtered.length){
+    c.innerHTML='<div class="empty"><div class="icon">📝</div><p>No questions in this section.</p></div>';
+    return;
+  }
+  c.innerHTML = filtered.map(q=>`
+    <div class="writing-card">
+      <div class="q-meta">
+        <span class="q-num">Q${q.id}</span>
+        <span class="q-topic">${q.section}</span>
+        <span class="q-topic" style="background:rgba(245,158,11,.15);color:var(--warn)">${q.type}</span>
+      </div>
+      <div class="w-question">${q.q}</div>
+      <div class="w-marks">[${q.marks} Marks]</div>
+      <button class="reveal-btn" id="rbtn-${q.id}" onclick="toggleReveal(${q.id})">Show Model Answer</button>
+      <div class="model-answer" id="ma-${q.id}">
+        <h4>Model Answer</h4>
+        ${q.answer}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleReveal(id){
+  const ma = document.getElementById(`ma-${id}`);
+  const btn = document.getElementById(`rbtn-${id}`);
+  const showing = ma.classList.contains('show');
+  ma.classList.toggle('show', !showing);
+  btn.textContent = showing ? 'Show Model Answer' : 'Hide Model Answer';
+  btn.classList.toggle('revealed', !showing);
+}
+
+// ═══════════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════════
+function updateResults(){
+  const mcqTotal    = Object.keys(state.mcqAnswers).length;
+  const mcqCorrect  = Object.values(state.mcqAnswers).filter(a=>a.correct).length;
+  const tfTotal     = Object.keys(state.tfAnswers).length;
+  const tfCorrect   = Object.values(state.tfAnswers).filter(a=>a.correct).length;
+  const grandTotal  = mcqTotal + tfTotal;
+  const grandCorrect= mcqCorrect + tfCorrect;
+
+  const mcqPct = mcqTotal ? Math.round(mcqCorrect/mcqTotal*100) : null;
+  const tfPct  = tfTotal  ? Math.round(tfCorrect/tfTotal*100)   : null;
+  const totPct = grandTotal ? Math.round(grandCorrect/grandTotal*100) : null;
+
+  document.getElementById('res-mcq-score').textContent = mcqPct!==null ? mcqPct+'%' : '—';
+  document.getElementById('res-tf-score').textContent  = tfPct!==null  ? tfPct+'%'  : '—';
+  document.getElementById('res-total-score').textContent = totPct!==null ? totPct+'%' : '—';
+
+  document.getElementById('res-mcq-bar').style.width   = (mcqPct||0)+'%';
+  document.getElementById('res-tf-bar').style.width    = (tfPct||0)+'%';
+  document.getElementById('res-total-bar').style.width = (totPct||0)+'%';
+
+  const gl = document.getElementById('gradeDisplay');
+  const gm = document.getElementById('gradeMsg');
+  if(totPct===null){
+    gl.textContent='—'; gl.style.color='var(--tx3)'; gm.textContent='Answer some questions to see your grade';
+  } else if(totPct>=80){
+    gl.textContent='A'; gl.style.color='var(--ok)'; gm.textContent='Excellent! You have a strong grasp of the material.';
+  } else if(totPct>=70){
+    gl.textContent='B'; gl.style.color='var(--pri-l)'; gm.textContent='Good work! Review the questions you missed.';
+  } else if(totPct>=60){
+    gl.textContent='C'; gl.style.color='var(--warn)'; gm.textContent='Fair — keep studying and practice more questions.';
+  } else if(totPct>=50){
+    gl.textContent='D'; gl.style.color='#f97316'; gm.textContent='Needs improvement — revisit the lecture notes.';
+  } else {
+    gl.textContent='F'; gl.style.color='var(--err)'; gm.textContent='Keep studying — use the model answers and Coding Lab.';
+  }
+}
+
+function resetAll(){
+  state.mcqAnswers={};
+  state.tfAnswers={};
+  renderMCQ();
+  renderTF();
+  updateResults();
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+renderMCQ();
+renderTF();
+renderWriting();
+</script>
+</body>
+</html>
