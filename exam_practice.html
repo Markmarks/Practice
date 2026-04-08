@@ -3591,6 +3591,253 @@ const sectionZData = [
       <li>AGI (Artificial General Intelligence) — a machine that could genuinely pass the Turing Test across all domains — remains a future goal, not a present reality.</li>
     </ul>
   </li>
+</ul>`},
+
+/* ── AI FOUNDATIONS — extra 2 to reach 6 ── */
+{id:"z21", topic:"AI Foundations", marks:5, type:"list",
+ q:"List and explain <strong>FIVE capabilities</strong> of modern AI systems that make them useful in real-world applications. [5 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Speech and Language Recognition:</strong> AI can convert spoken words to text and understand natural language commands — enabling voice assistants like Siri, Alexa, and Google Assistant.</li>
+  <li><strong>2. Image and Visual Interpretation:</strong> AI analyses pixels to detect faces, objects, diseases in medical scans, and road conditions for self-driving cars.</li>
+  <li><strong>3. Pattern Recognition in Large Datasets:</strong> AI identifies trends and patterns in millions of data points in seconds — used in fraud detection, stock market analysis, and weather forecasting.</li>
+  <li><strong>4. Automated Decision-Making:</strong> AI makes real-time decisions without human intervention — credit scoring, traffic light control, content moderation on social media platforms.</li>
+  <li><strong>5. Personalised Recommendations:</strong> AI learns individual user preferences and recommends relevant content — Netflix movie suggestions, Spotify playlists, Amazon product recommendations.</li>
+</ul>`},
+
+{id:"z22", topic:"AI Foundations", marks:6, type:"compare",
+ q:"Distinguish between <strong>Narrow AI (Weak AI)</strong> and <strong>Artificial General Intelligence (AGI)</strong>. Which one exists today? Justify your answer. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Narrow AI (Weak AI):</strong>
+    <ul>
+      <li>Designed and trained for ONE SPECIFIC TASK. Highly capable within that domain but cannot transfer knowledge to a different task.</li>
+      <li>Examples: AlphaGo (plays Go only), facial recognition systems (identify faces only), spam filters (classify emails only).</li>
+      <li>Cannot reason, generalise, or understand outside its trained domain.</li>
+    </ul>
+  </li>
+  <li><strong>Artificial General Intelligence (AGI):</strong>
+    <ul>
+      <li>A hypothetical AI with HUMAN-LEVEL ability across ALL intellectual tasks — reasoning, creativity, language, learning, and social understanding across any domain.</li>
+      <li>Could transfer knowledge from one domain to another, just as humans do.</li>
+      <li>Does NOT currently exist.</li>
+    </ul>
+  </li>
+  <li><strong>Which exists today?</strong> Only NARROW AI exists today. All deployed AI systems — including ChatGPT, self-driving cars, and medical diagnostics — are narrow. They excel at specific tasks but fail immediately outside their training domain. AGI remains a long-term research goal with no agreed timeline for achievement.</li>
+</ul>`},
+
+/* ── DEEP LEARNING — extra 2 to reach 6 ── */
+{id:"z23", topic:"Deep Learning", marks:4, type:"explain",
+ q:"What is <strong>Backpropagation</strong> in neural network training? Why is it essential for learning? [4 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Backpropagation (Backward Propagation of Errors) is the algorithm used to train neural networks by propagating the prediction error BACKWARDS through the network, layer by layer, to adjust weights and biases.</li>
+  <li><strong>How it works:</strong>
+    <ol>
+      <li>The network makes a forward-pass prediction.</li>
+      <li>The prediction is compared to the correct answer — the difference is the LOSS (error).</li>
+      <li>The error is propagated backwards using calculus (chain rule) to calculate how much each weight contributed to the error.</li>
+      <li>Weights that caused the error are DECREASED; weights that would have improved accuracy are INCREASED.</li>
+    </ol>
+  </li>
+  <li><strong>Why it is essential:</strong> Without backpropagation, there is no mechanism to improve the network's predictions. It is the core learning algorithm — the "teaching" step that converts random initial weights into a trained, accurate model. Every deep learning system uses backpropagation (or a variant of it).</li>
+</ul>`},
+
+{id:"z24", topic:"Deep Learning", marks:5, type:"explain",
+ q:"Explain the <strong>MNIST dataset</strong> in detail. What makes it an ideal dataset for learning about neural networks? Include its size, structure, and purpose. [5 Marks]",
+ answer:`<ul>
+  <li><strong>What is MNIST:</strong> The Modified National Institute of Standards and Technology (MNIST) dataset is one of the most famous datasets in AI/ML. It contains 70,000 greyscale images of handwritten digits (0–9) written by many different people.</li>
+  <li><strong>Structure:</strong>
+    <ul>
+      <li>Image size: 28 × 28 pixels — each pixel has a value (0–255) representing darkness.</li>
+      <li>Split: 60,000 training images + 10,000 test images.</li>
+      <li>Each image has a label (0–9) — making it a supervised classification dataset.</li>
+      <li>Before feeding into a network, the 28×28 image is "flattened" into a 1D list of 784 numbers.</li>
+    </ul>
+  </li>
+  <li><strong>Why it is ideal for learning:</strong>
+    <ul>
+      <li>Simple enough to train quickly (even on a laptop), yet complex enough to teach real ML concepts.</li>
+      <li>Well-balanced — roughly equal numbers of each digit (0–9).</li>
+      <li>Built-in evaluation: the 10,000 test images measure how well the trained model generalises to unseen handwriting.</li>
+      <li>Universally used as the "Hello World" of deep learning — results are easily comparable across models.</li>
+    </ul>
+  </li>
+</ul>`},
+
+/* ── NLP — extra 3 to reach 6 ── */
+{id:"z25", topic:"NLP", marks:4, type:"explain",
+ q:"What is <strong>Sentiment Analysis</strong> in NLP? Explain how it works and give TWO real-world business applications. [4 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Sentiment Analysis is an NLP task that automatically determines the emotional tone of a piece of text — classifying it as Positive, Negative, or Neutral (and sometimes more granular emotions like anger, joy, or sadness).</li>
+  <li><strong>How it works:</strong>
+    <ol>
+      <li>Text is tokenised (converted to numbers).</li>
+      <li>A trained ML/DL model analyses word patterns, context, and phrasing — e.g., "excellent service" → positive; "very disappointed" → negative.</li>
+      <li>The model outputs a sentiment label and confidence score.</li>
+    </ol>
+  </li>
+  <li><strong>TWO Real-World Business Applications:</strong>
+    <ol>
+      <li><strong>Brand Monitoring:</strong> Companies automatically analyse thousands of social media posts and product reviews daily to monitor how customers feel about their brand — without reading every comment manually.</li>
+      <li><strong>Customer Service Prioritisation:</strong> Customer support systems detect highly negative messages and automatically escalate them to human agents, ensuring urgent complaints are handled quickly.</li>
+    </ol>
+  </li>
+</ul>`},
+
+{id:"z26", topic:"NLP", marks:5, type:"explain",
+ q:"Explain what a <strong>Voice Assistant</strong> (like Siri or Alexa) does using NLP. Describe the FOUR main stages involved from when a user speaks to when the assistant responds. [5 Marks]",
+ answer:`<ul>
+  <li><strong>Overview:</strong> Voice assistants use a pipeline of NLP and AI techniques to convert spoken human language into actions or spoken responses in real time.</li>
+  <li><strong>FOUR Stages:</strong>
+    <ol>
+      <li><strong>Speech Recognition (ASR — Automatic Speech Recognition):</strong> The spoken audio is converted into text. Deep learning models process the audio waveform and output the most likely written transcription of what was said.</li>
+      <li><strong>Natural Language Understanding (NLU):</strong> The transcribed text is analysed to determine INTENT (what does the user want?) and ENTITIES (specific details — location, time, name). Example: "What is the weather in Accra tomorrow?" → Intent: weather query, Entity: Accra, tomorrow.</li>
+      <li><strong>Action / Information Retrieval:</strong> Based on the identified intent, the system queries a database, API, or knowledge base to retrieve the relevant answer or execute an action (set alarm, play music, make a call).</li>
+      <li><strong>Natural Language Generation (NLG) + Text-to-Speech:</strong> The retrieved information is converted into a natural-sounding sentence, then synthesised back into spoken audio — which the user hears as the assistant's response.</li>
+    </ol>
+  </li>
+</ul>`},
+
+{id:"z27", topic:"NLP", marks:4, type:"list",
+ q:"State and explain <strong>FOUR challenges</strong> that make Natural Language Processing (NLP) difficult for machines. [4 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Ambiguity:</strong> Many words and sentences have multiple meanings depending on context. Example: "I saw the bat" — is it an animal or a cricket bat? Machines struggle to resolve such ambiguity without deep contextual understanding.</li>
+  <li><strong>2. Sarcasm and Irony:</strong> Humans frequently say the opposite of what they mean ("Great, another Monday!"). Detecting sarcasm requires cultural context and tone — very difficult for current NLP models.</li>
+  <li><strong>3. Language Variation:</strong> Slang, dialects, abbreviations, and informal language vary massively across regions and communities. A model trained on formal English may completely misunderstand Ghanaian Pidgin or Twitter slang.</li>
+  <li><strong>4. Context over Long Distances:</strong> Understanding a sentence sometimes requires remembering information stated many paragraphs earlier. Traditional models struggled with long-range dependencies — a problem that Transformer models (like BERT and GPT) have partially addressed.</li>
+</ul>`},
+
+/* ── PROMPT ENGINEERING — extra 3 to reach 6 ── */
+{id:"z28", topic:"Prompt Engineering", marks:4, type:"explain",
+ q:"What are <strong>Anti-Patterns</strong> in Prompt Engineering? Give FOUR examples of common prompt mistakes and explain why each produces poor results. [4 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Too Vague:</strong> "Tell me about AI" — gives no direction. The AI produces a generic, surface-level response because it doesn't know your purpose, depth level, or audience. <em>Fix: Be specific — "Explain the three main subfields of AI in simple terms for a first-year university student."</em></li>
+  <li><strong>2. Too Long and Overloaded:</strong> Asking for many different things in one prompt overwhelms the model — it tries to do everything poorly rather than one thing well. <em>Fix: Break complex requests into separate, focused prompts.</em></li>
+  <li><strong>3. Ambiguous Instructions:</strong> "Make it better" — the AI doesn't know what "better" means (shorter? more formal? more detailed?). Vague directives produce random changes. <em>Fix: Say exactly what to improve — "Rewrite this paragraph to be more formal and reduce it to 3 sentences."</em></li>
+  <li><strong>4. Leading or Biased Prompts:</strong> "Don't you agree that Python is the best programming language?" — pushes the AI toward a pre-determined answer rather than balanced analysis. <em>Fix: Use neutral framing — "Compare Python with other programming languages for data science tasks."</em></li>
+</ul>`},
+
+{id:"z29", topic:"Prompt Engineering", marks:5, type:"explain",
+ q:"Explain <strong>Open-Ended Prompting</strong> and <strong>Keyword-Based Prompting</strong>. When should you use each? Give ONE example of each. [5 Marks]",
+ answer:`<ul>
+  <li><strong>Open-Ended Prompting:</strong>
+    <ul>
+      <li>Gives the AI a broad or loosely defined instruction, allowing a wide range of creative or exploratory responses.</li>
+      <li><em>Best used for:</em> Brainstorming, storytelling, generating multiple ideas, big-picture thinking where you want variety and creativity rather than precision.</li>
+      <li><em>Example:</em> "Imagine five ways AI could transform education in Ghana over the next decade." — allows the AI to explore freely and produce diverse, imaginative ideas.</li>
+      <li><em>Trade-off:</em> May produce less focused answers — acceptable when exploration is the goal.</li>
+    </ul>
+  </li>
+  <li><strong>Keyword-Based Prompting:</strong>
+    <ul>
+      <li>Adds specific signal words or phrases to guide the AI's tone, style, and response type — keeping it focused and relevant.</li>
+      <li><em>Best used for:</em> Professional documents, academic writing, technical explanations — where tone and style matter.</li>
+      <li><em>Example:</em> "Summarise the advantages of machine learning in healthcare in an <strong>academic</strong>, <strong>formal</strong>, <strong>concise</strong> tone using bullet points." — the keywords "academic," "formal," and "concise" act as style signals.</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:"z30", topic:"Prompt Engineering", marks:4, type:"list",
+ q:"State the <strong>FOUR Principles of Prompt Engineering</strong> from your lecture notes and briefly explain each. [4 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Provide Examples (Few-Shot):</strong> Show the AI what you want by giving it 1–10 worked examples before the task. Examples teach the AI the desired format, style, and level of detail far more efficiently than instructions alone.</li>
+  <li><strong>2. Employ Action Verbs:</strong> Use clear, specific action words to tell the AI exactly what operation to perform — "Summarise," "Compare," "List," "Explain step by step," "Translate," "Rewrite." Vague verbs produce vague results.</li>
+  <li><strong>3. Specify Output Format:</strong> Explicitly define how you want the response structured — "as a numbered list," "in a table," "in under 200 words," "as a formal email." This prevents the AI from choosing a format that doesn't suit your need.</li>
+  <li><strong>4. Incorporate Domain Knowledge:</strong> Include relevant specialist context or terminology in your prompt. Telling the AI "you are a BCS 405 lecturer explaining to final-year students" gives it the domain framing needed to produce appropriately pitched, accurate responses.</li>
+</ul>`},
+
+/* ── ML PARADIGMS — extra 3 to reach 6 ── */
+{id:"z31", topic:"ML Paradigms", marks:6, type:"explain",
+ q:"Explain the <strong>Machine Learning Pipeline</strong>. Describe each of the FOUR stages and explain what happens at each step. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> The ML Pipeline is the end-to-end process of building a working machine learning model — from raw data to a deployed, usable system.</li>
+  <li><strong>Stage 1 — Data Collection:</strong>
+    <ul><li>Gather raw data relevant to the problem. Data can come from databases, sensors, web scraping, surveys, or APIs. Quality and quantity of data directly determines model quality — "garbage in, garbage out."</li></ul>
+  </li>
+  <li><strong>Stage 2 — Data Preparation:</strong>
+    <ul><li>Clean the data (handle missing values, remove duplicates, fix errors), encode categorical variables, scale numerical features, and split into training and test sets. This stage often takes 60–80% of total project time.</li></ul>
+  </li>
+  <li><strong>Stage 3 — Model Training:</strong>
+    <ul><li>Select an algorithm (Decision Tree, Random Forest, Neural Network, etc.), feed it the training data, and let it learn — adjusting its internal parameters to minimise prediction error.</li></ul>
+  </li>
+  <li><strong>Stage 4 — Model Deployment:</strong>
+    <ul><li>The trained model is integrated into a real application or service where it makes predictions on new, live data. Requires monitoring for performance degradation and periodic retraining as new data arrives.</li></ul>
+  </li>
+</ul>`},
+
+{id:"z32", topic:"ML Paradigms", marks:5, type:"explain",
+ q:"Define <strong>Classification</strong> in Machine Learning. Distinguish between <strong>Binary</strong> and <strong>Multiclass</strong> Classification, giving TWO examples of each. [5 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Classification is a supervised ML task where the model predicts which DISCRETE CATEGORY or CLASS an input belongs to. The model learns a decision boundary from labeled training examples and applies it to new, unseen data.</li>
+  <li><strong>Binary Classification (2 classes):</strong>
+    <ul>
+      <li>The output has exactly TWO possible classes — typically 0 or 1, yes or no.</li>
+      <li><em>Example 1:</em> Spam detection — "Spam" or "Not Spam."</li>
+      <li><em>Example 2:</em> Banknote authentication — "Genuine" (0) or "Counterfeit" (1).</li>
+    </ul>
+  </li>
+  <li><strong>Multiclass Classification (3+ classes):</strong>
+    <ul>
+      <li>The output has THREE OR MORE possible classes.</li>
+      <li><em>Example 1:</em> Handwritten digit recognition — classifying an image as one of 10 digits (0–9).</li>
+      <li><em>Example 2:</em> Fruit classification — identifying whether a fruit is an apple, orange, lemon, or mango.</li>
+    </ul>
+  </li>
+  <li><strong>Key note:</strong> Binary algorithms (Logistic Regression, SVM) can be extended to multiclass using One-vs-Rest or Softmax strategies.</li>
+</ul>`},
+
+{id:"z33", topic:"ML Paradigms", marks:5, type:"list",
+ q:"Explain <strong>FIVE real-world applications</strong> of Machine Learning across different industries. [5 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Healthcare — Medical Diagnosis:</strong> ML models analyse X-rays, MRIs, and pathology slides to detect cancers, fractures, and diseases with accuracy matching specialist doctors. Enables faster, scalable diagnosis in resource-limited settings.</li>
+  <li><strong>2. Finance — Fraud Detection:</strong> Banks use ML to analyse thousands of transactions per second, flagging unusual patterns (unusual location, abnormal amount) as potential fraud in real time — protecting customers without manual review.</li>
+  <li><strong>3. Agriculture — Crop Monitoring:</strong> Drone-mounted computer vision and ML models analyse crop health, detect pest infestations early, and predict yields — helping farmers in Ghana and across Africa optimise harvests.</li>
+  <li><strong>4. Retail — Recommendation Systems:</strong> E-commerce platforms (Jumia, Amazon) use collaborative filtering ML models to recommend products based on purchase history and browsing behaviour, increasing sales and customer satisfaction.</li>
+  <li><strong>5. Transportation — Traffic Management:</strong> ML analyses real-time traffic data from sensors and cameras to optimise traffic light timing, reduce congestion, and provide drivers with the fastest routes via apps like Google Maps.</li>
+</ul>`},
+
+/* ── ETHICS — extra 3 to reach 6 ── */
+{id:"z34", topic:"Ethics", marks:4, type:"explain",
+ q:"What is <strong>data privacy</strong> in the context of AI? Explain what GDPR is and how it protects individuals from AI-related privacy risks. [4 Marks]",
+ answer:`<ul>
+  <li><strong>Data Privacy in AI:</strong> AI systems require vast amounts of personal data (location, behaviour, health, finances, conversations) to learn and function. This raises serious concerns about who has access to this data, how it is used, whether users consented, and whether it is stored securely.</li>
+  <li><strong>Privacy risks from AI:</strong>
+    <ul>
+      <li>Voice assistants (Siri, Alexa) continuously listen and may record sensitive conversations without user awareness.</li>
+      <li>Facial recognition systems can track individuals in public spaces without consent.</li>
+      <li>AI recommendation systems build detailed profiles of users' beliefs, preferences, and behaviours.</li>
+    </ul>
+  </li>
+  <li><strong>GDPR (General Data Protection Regulation):</strong> A European Union law (2018) that gives individuals stronger control over their personal data. Key rights it provides:
+    <ul>
+      <li><strong>Right to Access:</strong> Users can request what data a company holds about them.</li>
+      <li><strong>Right to Erasure ("Be Forgotten"):</strong> Users can request their data be deleted.</li>
+      <li><strong>Right to Explanation:</strong> Users have the right to understand automated AI decisions made about them (e.g., loan rejection).</li>
+      <li><strong>Informed Consent:</strong> Companies must explicitly ask permission before collecting personal data.</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:"z35", topic:"Ethics", marks:5, type:"explain",
+ q:"Explain the concept of <strong>AI Transparency</strong> and the <strong>'Black Box' problem</strong>. Why is transparency especially important in high-stakes AI applications? [5 Marks]",
+ answer:`<ul>
+  <li><strong>AI Transparency:</strong> The ability to understand, explain, and audit how an AI system arrives at its decisions. A transparent AI system shows its reasoning in a way that humans can verify and trust.</li>
+  <li><strong>The Black Box Problem:</strong> Many deep learning models are "black boxes" — they take inputs and produce outputs, but the internal decision-making process (involving millions of weights) is impossible to interpret directly. You cannot see WHY the model made a particular decision.</li>
+  <li><strong>Why Transparency Matters in High-Stakes Applications:</strong>
+    <ul>
+      <li><strong>Healthcare:</strong> A doctor needs to understand WHY an AI diagnosed a tumour as malignant before acting on it. A wrong unexplained decision could cost a patient their life.</li>
+      <li><strong>Finance:</strong> If an AI rejects a loan application, the applicant has a legal right (under GDPR) to receive an explanation — a black box cannot provide this.</li>
+      <li><strong>Criminal Justice:</strong> AI tools used in bail or sentencing decisions must be explainable and auditable to prevent discriminatory outcomes that cannot be challenged.</li>
+    </ul>
+  </li>
+  <li><strong>Solutions:</strong> Explainable AI (XAI) techniques such as LIME and SHAP help interpret black box models by showing which input features most influenced a prediction.</li>
+</ul>`},
+
+{id:"z36", topic:"Ethics", marks:4, type:"list",
+ q:"List and explain <strong>FOUR responsibilities</strong> that AI developers and organisations have when building and deploying AI systems. [4 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Fairness:</strong> Developers must audit training data and model outputs for bias — ensuring the AI does not discriminate against individuals based on gender, race, age, or socioeconomic status. Diverse development teams and representative datasets reduce bias.</li>
+  <li><strong>2. Transparency and Explainability:</strong> Organisations must be able to explain how their AI systems make decisions, especially in regulated industries. Users affected by automated decisions have a right to understand and challenge them.</li>
+  <li><strong>3. Data Privacy and Security:</strong> Organisations collecting data to train AI must obtain informed consent, store data securely, and limit data collection to what is necessary. Compliance with data protection laws (GDPR) is mandatory in many jurisdictions.</li>
+  <li><strong>4. Accountability:</strong> When an AI system causes harm (misdiagnosis, discriminatory hiring, financial loss), there must be clear lines of human accountability — a person or organisation that is responsible and can be held legally liable. "The AI did it" is not an acceptable defence.</li>
 </ul>`}
 
 ];
