@@ -2711,7 +2711,284 @@ const writingData = [
   <li><strong>3. Goal-Based Agent:</strong> Has explicit GOALS and uses search/planning to find action sequences that achieve those goals. More flexible than reflex agents — can handle new goals without reprogramming. Example: GPS navigation agent planning a route.</li>
   <li><strong>4. Utility-Based Agent:</strong> Uses a UTILITY FUNCTION to measure how desirable each state is. When multiple goals conflict or there is uncertainty, the agent chooses actions that maximize expected utility. Example: self-driving car balancing speed vs. safety vs. comfort.</li>
   <li><strong>5. Learning Agent:</strong> Can IMPROVE its performance over time through experience. Has four components: Learning Element (makes improvements), Performance Element (takes actions), Critic (evaluates performance), Problem Generator (suggests exploratory actions).</li>
-</ul>`}
+</ul>`},
+
+/* ── FROM NEW LECTURES: DEEP LEARNING, NLP, PROMPT ENGINEERING, ML PARADIGMS ── */
+
+{id:16, section:"Deep Learning", marks:6, type:"explain",
+ q:"What is <strong>Deep Learning</strong>? Explain why traditional rule-based programming is insufficient for tasks like image and speech recognition. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Deep Learning is a computational approach — a specialized branch of Machine Learning — that enables machines to learn complex patterns from large volumes of data without being explicitly programmed with rules. It is biologically inspired by the structure of the human brain.</li>
+  <li><strong>Why rules fail for image recognition:</strong>
+    <ul>
+      <li>It is impossible to manually specify all the features that make an image a "cat" or a "dog."</li>
+      <li>Rule-based systems cannot adapt to visual variations in lighting, angles, or backgrounds.</li>
+      <li>For speech, different accents, speeds, and environments make exhaustive rules impractical.</li>
+    </ul>
+  </li>
+  <li><strong>How Deep Learning solves this:</strong> Instead of rules, the system processes large numbers of examples repeatedly. Performance improves with data exposure. Knowledge is built progressively across multiple layers — early layers detect simple features (edges), later layers detect complex features (faces, words).</li>
+  <li><strong>Key advantage:</strong> Automatic feature extraction — no human bias or manual feature engineering needed.</li>
+</ul>`},
+
+{id:17, section:"Deep Learning", marks:6, type:"explain",
+ q:"Describe the <strong>three main layers</strong> of a Deep Learning neural network and explain the role of each. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>1. Input Layer — "Receiving Raw Information":</strong>
+    <ul>
+      <li>Receives raw data (e.g., pixel values of an image, word tokens of text).</li>
+      <li>Does NOT think or decide — simply passes data forward unchanged.</li>
+      <li>Example: for a 28×28 image (MNIST), the input layer has 784 neurons, one per pixel.</li>
+    </ul>
+  </li>
+  <li><strong>2. Hidden Layers — "Learning Patterns":</strong>
+    <ul>
+      <li>Where learning actually happens. Can be many layers deep (hence "deep" learning).</li>
+      <li>Each neuron combines input values using WEIGHTS, adds a BIAS, and applies an ACTIVATION FUNCTION.</li>
+      <li>Early layers detect simple patterns (edges, curves); deeper layers detect complex patterns (shapes, objects).</li>
+      <li>Example: in digit recognition, a neuron might ask "Is there a vertical line here?"</li>
+    </ul>
+  </li>
+  <li><strong>3. Output Layer — "Final Answer":</strong>
+    <ul>
+      <li>Produces the final result — a classification label, a translated sentence, a probability score.</li>
+      <li>Example: for MNIST, the output layer has 10 neurons (one per digit 0–9); the highest activation is the prediction.</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:18, section:"Deep Learning", marks:4, type:"compare",
+ q:"Distinguish between <strong>Shallow Neural Networks</strong> and <strong>Deep Neural Networks</strong>. Why does depth matter? [4 Marks]",
+ answer:`<ul>
+  <li><strong>Shallow Neural Networks:</strong> Have only one or a few hidden layers. Can learn simple patterns but struggle with complex tasks. Limited ability to build hierarchical feature representations.</li>
+  <li><strong>Deep Neural Networks:</strong> Have many hidden layers (can be hundreds). Each layer builds on the previous, learning increasingly abstract and complex representations. Far more powerful for tasks like image recognition, speech recognition, and language understanding.</li>
+  <li><strong>Why depth matters:</strong> Depth allows the network to learn a HIERARCHY of features. For a face: Layer 1 detects edges → Layer 2 detects eyes/nose shapes → Layer 3 detects a face. This compositional learning is impossible in shallow networks without massive manual feature engineering.</li>
+  <li><strong>Trade-off:</strong> Deeper networks require more data and computing power (GPUs) to train effectively.</li>
+</ul>`},
+
+{id:19, section:"Deep Learning", marks:5, type:"explain",
+ q:"Explain the <strong>MNIST dataset</strong>. How is it used to teach a neural network to recognize handwritten digits? [5 Marks]",
+ answer:`<ul>
+  <li><strong>What is MNIST:</strong> One of the most famous datasets in AI/ML. It contains 70,000 grayscale images of handwritten digits (0–9), written by many different people. Each image is standardized to 28×28 pixels.</li>
+  <li><strong>Structure:</strong> 60,000 training images + 10,000 test images. Each image is paired with its correct label (0–9), making it a supervised learning dataset.</li>
+  <li><strong>How it teaches the network:</strong>
+    <ol>
+      <li>Each pixel value (0–255, dark to light) is fed into the input layer.</li>
+      <li>The network processes these values through hidden layers, detecting patterns like curves and lines.</li>
+      <li>The output layer predicts which digit (0–9) the image represents.</li>
+      <li>If wrong, the error is backpropagated — weights are adjusted slightly.</li>
+      <li>After 60,000 examples, the network generalizes and can classify unseen handwriting.</li>
+    </ol>
+  </li>
+  <li><strong>Why it is important:</strong> It is perfectly sized for learning, well-balanced, and provides a built-in generalization test via the 10,000 test images.</li>
+</ul>`},
+
+{id:20, section:"NLP", marks:6, type:"explain",
+ q:"What is <strong>Natural Language Processing (NLP)</strong>? Explain why computers cannot directly understand human language and how <strong>tokenization</strong> addresses this. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Definition of NLP:</strong> A field of AI that enables computers to interpret, understand, and generate human language (speech and text). It bridges the gap between human communication and machine understanding. Applications include voice assistants (Siri, Alexa), translation services, chatbots, and search engines.</li>
+  <li><strong>Why computers cannot understand text directly:</strong>
+    <ul>
+      <li>Computers interpret numbers, not characters or words.</li>
+      <li>Raw text is unstructured and cannot be processed by mathematical algorithms without conversion.</li>
+      <li>Meaning, emotion, and intent are not preserved in simple character representations.</li>
+    </ul>
+  </li>
+  <li><strong>Tokenization:</strong> The process of converting raw text into smaller, manageable pieces (tokens — words or sub-words) and assigning each a unique number.
+    <ul>
+      <li>Example: "I love my dog" → {I=1, love=2, my=3, dog=4} → [1, 2, 3, 4]</li>
+      <li>A new sentence "I love my cat" → [1, 2, 3, 5] (reuses existing tokens; cat=5 is new)</li>
+    </ul>
+  </li>
+  <li><strong>Why tokenization matters:</strong> Standardizes input, enables pattern recognition, preserves word identity and order, and is the foundational preprocessing step in all NLP workflows.</li>
+</ul>`},
+
+{id:21, section:"NLP", marks:4, type:"compare",
+ q:"Compare <strong>Letter-Level Encoding (ASCII)</strong> and <strong>Word-Level Tokenization</strong> as methods for representing text in NLP. State TWO limitations of ASCII encoding. [4 Marks]",
+ answer:`<ul>
+  <li><strong>ASCII (Letter-Level Encoding):</strong> Maps individual letters to their numeric ASCII codes. Example: "Listen" → [108, 105, 115, 116, 101, 110]. Simple but captures no meaning.</li>
+  <li><strong>Word-Level Tokenization:</strong> Assigns a unique integer to each distinct word. Example: "I love my dog" → [1, 2, 3, 4]. Preserves word identity and order, enabling semantic comparisons.</li>
+  <li><strong>TWO Limitations of ASCII encoding:</strong>
+    <ol>
+      <li>Does NOT capture word meaning or semantics — "listen" and "silent" share the same letters but have completely different meanings; ASCII cannot distinguish them.</li>
+      <li>Sentiment, emotion, and intent are not preserved — the encoding of "happy" looks no more positive than "sad."</li>
+    </ol>
+  </li>
+  <li><strong>Conclusion:</strong> Word-level tokenization is superior for NLP tasks because it produces cleaner, more abstract representations that allow models to learn semantic patterns and sentence structure.</li>
+</ul>`},
+
+{id:22, section:"Prompt Engineering", marks:6, type:"explain",
+ q:"What is <strong>Prompt Engineering</strong>? Describe any <strong>THREE (3)</strong> prompt engineering techniques and give an example of each. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Prompt Engineering is the skill of writing clear, specific instructions to help AI tools (like ChatGPT) produce accurate, useful, or creative responses. Quality of the prompt directly affects quality of the AI output.</li>
+  <li><strong>1. Direct Instruction Prompting:</strong> Give the AI very specific, detailed instructions removing all ambiguity.
+    <ul><li>Example: Instead of "Reply to complaint," say "Write a polite response that apologizes, explains the shipping delay, and offers a 10% discount."</li></ul>
+  </li>
+  <li><strong>2. Few-Shot Prompting:</strong> Provide the AI with a few examples (1–10) of the desired output format or style before asking it to perform the task.
+    <ul><li>Example: Show 3 example reviews labelled Positive/Negative/Neutral, then ask it to classify a new review. The AI learns the pattern from examples.</li></ul>
+  </li>
+  <li><strong>3. Question-Based Prompting:</strong> Frame the prompt as a clear, specific question to guide focused, informative answers.
+    <ul><li>Example: Instead of "Tell me about plant-based diets," ask "What are the THREE main health benefits of adopting a plant-based diet?"</li></ul>
+  </li>
+</ul>`},
+
+{id:23, section:"Prompt Engineering", marks:4, type:"compare",
+ q:"Distinguish between <strong>Prompt Patterns</strong> and <strong>Anti-Patterns</strong> in Prompt Engineering. Give TWO examples of each. [4 Marks]",
+ answer:`<ul>
+  <li><strong>Prompt Patterns:</strong> Proven, effective ways of writing prompts that help AI give accurate, useful, and clear answers. They act like templates or good habits that reduce trial-and-error.
+    <ul>
+      <li>Example 1: Using action verbs — "Summarize," "Compare," "List," "Explain step by step."</li>
+      <li>Example 2: Specifying output format — "Give your answer as a numbered list of 5 points."</li>
+    </ul>
+  </li>
+  <li><strong>Anti-Patterns:</strong> Common mistakes or bad habits when writing prompts that confuse the AI or produce poor, off-topic, or biased responses.
+    <ul>
+      <li>Example 1: Too vague — "Tell me about space" gives an unfocused, generic response.</li>
+      <li>Example 2: Asking too many things at once — "Explain AI, give examples, compare it to ML, and list its history" overwhelms the model and produces a scattered answer.</li>
+    </ul>
+  </li>
+  <li><strong>Key difference:</strong> Patterns guide the AI toward your goal; anti-patterns move it away from it.</li>
+</ul>`},
+
+{id:24, section:"Machine Learning", marks:6, type:"compare",
+ q:"Compare <strong>Regression</strong> and <strong>Classification</strong> in Machine Learning. Give TWO real-world examples of each. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Classification:</strong> Predicts a DISCRETE CATEGORY or class label. The output is one of a set of predefined groups.
+    <ul>
+      <li>Example 1: Spam detection — is this email "Spam" or "Not Spam"?</li>
+      <li>Example 2: Medical diagnosis — is this tumour "Benign" or "Malignant"?</li>
+    </ul>
+  </li>
+  <li><strong>Regression:</strong> Predicts a CONTINUOUS NUMERICAL VALUE. The output is a number on a scale.
+    <ul>
+      <li>Example 1: Predicting a house price based on location, size, and age.</li>
+      <li>Example 2: Forecasting monthly sales revenue using historical data.</li>
+    </ul>
+  </li>
+  <li><strong>Key difference table:</strong>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:.88rem">
+      <tr style="background:var(--surf2)"><th style="padding:6px;border:1px solid var(--bdr)">Aspect</th><th style="padding:6px;border:1px solid var(--bdr)">Regression</th><th style="padding:6px;border:1px solid var(--bdr)">Classification</th></tr>
+      <tr><td style="padding:6px;border:1px solid var(--bdr)">Output</td><td style="padding:6px;border:1px solid var(--bdr)">Continuous number</td><td style="padding:6px;border:1px solid var(--bdr)">Discrete class/label</td></tr>
+      <tr><td style="padding:6px;border:1px solid var(--bdr)">Question</td><td style="padding:6px;border:1px solid var(--bdr)">"How much?"</td><td style="padding:6px;border:1px solid var(--bdr)">"Which category?"</td></tr>
+      <tr><td style="padding:6px;border:1px solid var(--bdr)">Algorithm</td><td style="padding:6px;border:1px solid var(--bdr)">Linear Regression, Ridge</td><td style="padding:6px;border:1px solid var(--bdr)">Decision Tree, KNN, SVM</td></tr>
+    </table>
+  </li>
+</ul>`},
+
+{id:25, section:"Machine Learning", marks:6, type:"explain",
+ q:"Explain <strong>Unsupervised Learning</strong>. State THREE characteristics, TWO advantages, and give TWO real-world examples. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> A type of Machine Learning that finds patterns, structure, or groupings in data WITHOUT labels or explicit instructions. The algorithm discovers hidden structure from raw data alone — no "right answers" are provided during training.</li>
+  <li><strong>THREE Characteristics:</strong>
+    <ol>
+      <li>Works with unlabeled data — no predefined categories or tags.</li>
+      <li>Discovers natural groupings or patterns the human may not have anticipated.</li>
+      <li>Insight generation — finds meaningful structure without being told what to look for.</li>
+    </ol>
+  </li>
+  <li><strong>TWO Advantages:</strong>
+    <ol>
+      <li>Labeling data is expensive and time-consuming — unsupervised learning works without it.</li>
+      <li>Reveals hidden patterns and segments that domain experts might miss.</li>
+    </ol>
+  </li>
+  <li><strong>TWO Real-World Examples:</strong>
+    <ol>
+      <li><strong>Customer Segmentation:</strong> Automatically groups customers into "bargain seekers," "frequent shoppers," and "big spenders" based on purchase behavior — without predefined groups.</li>
+      <li><strong>Anomaly Detection:</strong> Learns what "normal" network traffic looks like, then flags unusual activity (e.g., network intrusions, credit card fraud) as anomalies.</li>
+    </ol>
+  </li>
+</ul>`},
+
+{id:26, section:"Machine Learning", marks:4, type:"explain",
+ q:"Explain <strong>THREE types of Regression algorithms</strong> and the situations each is best suited for. [4 Marks]",
+ answer:`<ul>
+  <li><strong>1. Linear Regression:</strong> Fits a straight line through data points to predict a continuous output. Best suited for simple, linear relationships between input and output.
+    <ul><li>Example: Predicting a child's adult height from their current height and parents' heights.</li></ul>
+  </li>
+  <li><strong>2. Polynomial Regression:</strong> Fits a curved (polynomial) line rather than a straight one. Best for non-linear relationships where output changes at a non-constant rate.
+    <ul><li>Example: Predicting the exact landing spot of a thrown ball (curved trajectory).</li></ul>
+  </li>
+  <li><strong>3. Lasso / Ridge Regression:</strong> Linear regression with added constraints (regularization penalties) to prevent extreme or unrealistic predictions. Best for situations requiring controlled, stable predictions.
+    <ul><li>Example: A bank predicting a safe loan amount — Ridge/Lasso ensure the prediction stays realistic and does not overfit to outliers.</li></ul>
+  </li>
+</ul>`},
+
+{id:27, section:"Prompt Engineering", marks:5, type:"explain",
+ q:"What is <strong>Prompt Optimization</strong>? Describe the steps involved and explain why it is important for professional and academic use of AI. [5 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Prompt Optimization is the process of improving and fine-tuning AI instructions so that the AI gives more accurate, clear, and useful responses.</li>
+  <li><strong>Steps in Prompt Optimization:</strong>
+    <ol>
+      <li>Start with an initial prompt and observe the AI's response.</li>
+      <li>Identify weaknesses — is the output too vague, off-topic, or poorly structured?</li>
+      <li>Adjust wording, structure, and level of detail in the prompt.</li>
+      <li>Add clear instructions: specify tone, word limit, format, domain context.</li>
+      <li>Test iteratively — compare versions to find which produces the best result.</li>
+    </ol>
+  </li>
+  <li><strong>Why it matters for professional/academic use:</strong>
+    <ul>
+      <li>Better prompts = more reliable, accurate, and relevant answers.</li>
+      <li>Reduces AI mistakes, confusion, and unintended bias in outputs.</li>
+      <li>In academic work, poorly prompted AI can produce generic or factually wrong content — optimization ensures quality.</li>
+      <li>In professional work (reports, code, data analysis), optimized prompts save time and improve consistency.</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:28, section:"Deep Learning", marks:4, type:"list",
+ q:"State and explain <strong>FOUR reasons</strong> why Deep Learning has become so powerful in recent years. [4 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Large Datasets:</strong> The internet has produced billions of labeled images, text documents, and audio recordings. Deep Learning thrives on large data — more data = better generalization.</li>
+  <li><strong>2. Powerful GPUs:</strong> Graphics Processing Units can perform thousands of parallel matrix operations simultaneously — exactly what neural network training requires. NVIDIA's CUDA made large-scale DL practical.</li>
+  <li><strong>3. Automatic Feature Extraction:</strong> Unlike traditional ML, deep networks learn features automatically from raw data (no manual feature engineering), reducing human effort and bias.</li>
+  <li><strong>4. Algorithmic Improvements:</strong> Better activation functions (ReLU), regularization techniques (Dropout, Batch Normalization), optimizers (Adam), and architectures (ResNet, Transformers) have dramatically improved training stability and accuracy.</li>
+</ul>`},
+
+{id:29, section:"NLP", marks:5, type:"list",
+ q:"List and briefly explain <strong>FIVE (5) real-world applications</strong> of Natural Language Processing (NLP). [5 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Machine Translation:</strong> Automatically translates text between languages (e.g., Google Translate). Uses sequence-to-sequence deep learning models to map one language's tokens to another's.</li>
+  <li><strong>2. Voice Assistants:</strong> Siri, Alexa, and Google Assistant convert speech to text, understand intent, and generate spoken responses using NLP and speech recognition.</li>
+  <li><strong>3. Chatbots and Customer Service:</strong> AI chatbots understand customer queries and respond appropriately, handling common support requests without human agents.</li>
+  <li><strong>4. Sentiment Analysis:</strong> Determines the emotional tone (positive, negative, neutral) of text — used by companies to analyze product reviews, social media mentions, and customer feedback.</li>
+  <li><strong>5. Search Engines:</strong> NLP enables search engines (Google) to understand the meaning and intent behind queries, not just keywords — returning relevant results even when exact words don't match.</li>
+</ul>`},
+
+{id:30, section:"Machine Learning", marks:6, type:"compare",
+ q:"Compare <strong>Supervised Learning</strong> and <strong>Unsupervised Learning</strong> under the following headings: Data Labels, Learning Type, Purpose, and Examples. [6 Marks]",
+ answer:`<table style="width:100%;border-collapse:collapse;font-size:.88rem">
+  <tr style="background:var(--surf2)">
+    <th style="padding:8px;border:1px solid var(--bdr);text-align:left">Aspect</th>
+    <th style="padding:8px;border:1px solid var(--bdr);text-align:left">Supervised Learning</th>
+    <th style="padding:8px;border:1px solid var(--bdr);text-align:left">Unsupervised Learning</th>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Data Labels</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Requires labeled data — each input has a known correct output</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Uses unlabeled data — no correct answers provided</td>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Learning Type</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Learning with a "teacher" — model corrects itself against known answers</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Discovery-based — model finds patterns on its own</td>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Purpose</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Prediction and classification</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Exploration and pattern discovery</td>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Examples</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Spam detection, medical diagnosis, banknote authentication</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Customer segmentation, anomaly detection, document clustering</td>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Human Analogy</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Student learning from a textbook with answers</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Baby learning to recognize faces through exposure</td>
+  </tr>
+</table>`}
 ];
 
 // ═══════════════════════════════════════════════
