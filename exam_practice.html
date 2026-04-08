@@ -179,6 +179,7 @@ select:focus,input:focus{outline:2px solid var(--pri);border-color:transparent}
       <button class="tab-btn" onclick="showPage('objectives')">📋 Objectives</button>
       <button class="tab-btn" onclick="showPage('trueFalse')">✔️ True/False</button>
       <button class="tab-btn" onclick="showPage('writing')">✍️ Section B</button>
+      <button class="tab-btn" onclick="showPage('sectionZ')">📚 Section Z</button>
       <button class="tab-btn" onclick="showPage('results')">📊 Scores</button>
     </div>
   </div>
@@ -306,6 +307,27 @@ select:focus,input:focus{outline:2px solid var(--pri);border-color:transparent}
     </select>
   </div>
   <div id="writingContainer"></div>
+</div>
+
+<!-- ══════════════════════ SECTION Z ══════════════════════ -->
+<div id="page-sectionZ" class="page">
+  <div class="section-header">
+    <h2>📚 Section Z — Lecture-Based Questions</h2>
+    <p>Fresh Section B questions generated directly from the BCS 405 lecture files. Read each question, attempt your answer, then reveal the model answer.</p>
+  </div>
+  <div class="controls">
+    <label>Topic:</label>
+    <select id="szFilter" onchange="renderSectionZ()">
+      <option value="all">All Topics</option>
+      <option value="AI Foundations">AI Foundations</option>
+      <option value="Deep Learning">Deep Learning</option>
+      <option value="NLP">Natural Language Processing</option>
+      <option value="Prompt Engineering">Prompt Engineering</option>
+      <option value="ML Paradigms">ML Paradigms</option>
+      <option value="Ethics">AI Ethics</option>
+    </select>
+  </div>
+  <div id="szContainer"></div>
 </div>
 
 <!-- ══════════════════════ RESULTS ══════════════════════ -->
@@ -3169,6 +3191,411 @@ function resetTF(){
 }
 
 // ═══════════════════════════════════════════════
+// SECTION Z DATA
+// ═══════════════════════════════════════════════
+const sectionZData = [
+
+/* ── AI FOUNDATIONS ── */
+{id:"z1", topic:"AI Foundations", marks:6, type:"explain",
+ q:"Define <strong>Artificial Intelligence (AI)</strong> and explain the THREE disciplines it draws from. Give a real-world example of AI in action. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Artificial Intelligence is the development of computer systems that can perform tasks normally requiring human intelligence — such as decision-making, learning, problem-solving, and language understanding. It replicates cognitive functions to enable intelligent machines.</li>
+  <li><strong>THREE Disciplines AI draws from:</strong>
+    <ol>
+      <li><strong>Computer Science:</strong> Provides the algorithms, data structures, and programming tools used to build AI systems.</li>
+      <li><strong>Mathematics & Logic:</strong> Underpins learning algorithms, probability theory, and logical reasoning used by AI agents.</li>
+      <li><strong>Linguistics & Psychology:</strong> Inform how AI understands and generates human language (NLP) and models human cognitive behaviour.</li>
+    </ol>
+  </li>
+  <li><strong>Real-world example:</strong> Google Translate uses AI (specifically Deep Learning and NLP) to automatically translate text between over 100 languages in real time — a task that previously required human translators.</li>
+</ul>`},
+
+{id:"z2", topic:"AI Foundations", marks:8, type:"explain",
+ q:"Trace the <strong>history of Artificial Intelligence</strong> from Alan Turing to the modern Deep Learning era. Include at least FOUR key milestones. [8 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>1. Alan Turing (1950) — "Can Machines Think?":</strong> British mathematician Alan Turing posed the fundamental question "Can machines think?" and introduced the <em>Turing Test</em> — a method to assess whether a machine can exhibit human-like conversation. If a human evaluator cannot distinguish the machine from a person, the machine passes. This ignited interest in building thinking machines.</li>
+  <li><strong>2. Dartmouth Conference (1956) — Birth of AI:</strong> John McCarthy formally introduced the term "Artificial Intelligence." Key figures including Marvin Minsky and Claude Shannon gathered to discuss machine intelligence. The Logic Theorist — an early AI program capable of solving mathematical theorems — was demonstrated, proving computers could exhibit human-exclusive problem-solving.</li>
+  <li><strong>3. First AI Winter (1970s–1980s):</strong> Early AI systems failed to generalize beyond narrow toy problems. Hardware limitations and shallow algorithms prevented real-world function. Government funding was withdrawn, and public trust declined — bringing AI research to a near standstill.</li>
+  <li><strong>4. Expert Systems Revival (1980s):</strong> AI was revived by expert systems — programs encoding human domain knowledge as IF-THEN rules. XCON configured computer hardware and saved millions. However, expert systems could not learn or adapt, eventually declining into a second AI winter.</li>
+  <li><strong>5. Deep Learning Revolution (2010s–present):</strong> Geoffrey Hinton's neural network research, combined with large internet datasets and powerful GPUs, birthed Deep Learning. It powers Google Translate, Facebook photo tagging, Tesla Autopilot, and ChatGPT — marking the most capable era of AI yet.</li>
+</ul>`},
+
+{id:"z3", topic:"AI Foundations", marks:6, type:"compare",
+ q:"Compare <strong>AI with Traditional Programming</strong>. What is the fundamental difference in how each handles problems? Give ONE example of each. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Traditional Programming:</strong>
+    <ul>
+      <li>The programmer explicitly codes every rule, decision, and instruction.</li>
+      <li>The system follows fixed, pre-defined logic and cannot handle situations not anticipated by the programmer.</li>
+      <li>It cannot adapt, improve, or learn from new data.</li>
+      <li><em>Example:</em> A calculator — it always performs exactly the operations coded into it. If you ask it to do something outside its rules, it fails.</li>
+    </ul>
+  </li>
+  <li><strong>AI Programming:</strong>
+    <ul>
+      <li>Instead of explicit rules, the system learns patterns from data and experience.</li>
+      <li>It can handle new, unseen situations by generalizing from what it has learned.</li>
+      <li>It adapts and improves over time with more data.</li>
+      <li><em>Example:</em> A spam filter — rather than being given a list of spam words, it learns from thousands of labeled emails and identifies new spam it has never seen before.</li>
+    </ul>
+  </li>
+  <li><strong>Key Difference:</strong> Traditional programming is STATIC (fixed rules); AI is ADAPTIVE (learns from data). AI can handle complexity and uncertainty that no programmer could anticipate in advance.</li>
+</ul>`},
+
+{id:"z4", topic:"AI Foundations", marks:6, type:"list",
+ q:"Identify and explain <strong>THREE domains/applications of AI</strong> — Natural Language Processing, Computer Vision, and Robotics. Give ONE real-world example for each. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>1. Natural Language Processing (NLP):</strong>
+    <ul>
+      <li>Enables machines to understand, interpret, and respond meaningfully to human language (speech and text).</li>
+      <li>Combines linguistic rules with ML models to analyse grammar, context, sentiment, and intent.</li>
+      <li><em>Example:</em> Voice assistants like Siri and Alexa — they understand spoken commands, process meaning, and respond in natural language.</li>
+    </ul>
+  </li>
+  <li><strong>2. Computer Vision (CV):</strong>
+    <ul>
+      <li>Allows machines to perceive and interpret visual data — images and video — by analysing pixels to detect patterns, shapes, and objects.</li>
+      <li>Trained on vast labeled image datasets using Deep Learning (CNNs).</li>
+      <li><em>Example:</em> Healthcare — AI systems analyse X-rays and MRI scans to detect tumours and diseases with accuracy matching specialist radiologists.</li>
+    </ul>
+  </li>
+  <li><strong>3. Robotics:</strong>
+    <ul>
+      <li>Brings AI into the physical world — robots use sensors, AI models, and control systems to navigate, manipulate objects, and complete tasks autonomously.</li>
+      <li>Can learn from experience and improve performance over time.</li>
+      <li><em>Example:</em> Factory robotic arms that assemble products, or the Roomba robot vacuum that maps rooms, avoids obstacles, and cleans autonomously.</li>
+    </ul>
+  </li>
+</ul>`},
+
+/* ── DEEP LEARNING ── */
+{id:"z5", topic:"Deep Learning", marks:6, type:"explain",
+ q:"Explain how a <strong>neural network learns</strong>. Include the roles of weights, biases, forward propagation, and backpropagation. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Starting point — Random Weights:</strong> The network begins with random weights (connection strengths) and biases (adjustment values). It makes random, inaccurate predictions initially.</li>
+  <li><strong>Forward Propagation:</strong> Input values are multiplied by weights, the bias is added, and the result is passed through an activation function (e.g., ReLU). This happens layer by layer from input to output, producing a final prediction.</li>
+  <li><strong>Measuring Error:</strong> The prediction is compared to the correct answer using a loss function. The difference (error) tells the network how wrong it was.</li>
+  <li><strong>Backpropagation:</strong> The error is propagated BACKWARDS through the network. Weights that contributed to the error are DECREASED; weights that would have helped correct the answer are INCREASED. This uses calculus (chain rule/gradient descent).</li>
+  <li><strong>Iteration:</strong> This process repeats thousands of times over many examples. With each iteration, weights and biases are fine-tuned, and predictions become increasingly accurate.</li>
+  <li><strong>Result:</strong> The network learns to recognize patterns — not because it was told rules, but because it gradually adjusted its internal parameters through experience.</li>
+</ul>`},
+
+{id:"z6", topic:"Deep Learning", marks:6, type:"explain",
+ q:"Explain the role of <strong>each layer in a neural network</strong> using the MNIST handwritten digit recognition task as your example. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>Input Layer — Receiving Raw Data:</strong>
+    <ul>
+      <li>The MNIST image (28×28 pixels) is <em>flattened</em> into a 1D list of 784 numbers, each representing a pixel's darkness value (0–255).</li>
+      <li>The input layer has 784 neurons — one per pixel. It does NOT think or decide; it simply receives and passes data forward unchanged.</li>
+      <li>Analogy: An eye seeing parts of a picture without yet understanding what it sees.</li>
+    </ul>
+  </li>
+  <li><strong>Hidden Layer — Learning Patterns:</strong>
+    <ul>
+      <li>Example: 128 neurons that act as tiny calculators finding patterns.</li>
+      <li>Each neuron combines pixel values using weights, adds a bias, and applies the ReLU activation function (lets positive signals through, cuts off negatives).</li>
+      <li>Early neurons detect simple features (edges, curves); deeper neurons detect complex features (loops, specific digit shapes).</li>
+      <li>Analogy: A detective examining clues, building from simple observations to complex conclusions.</li>
+    </ul>
+  </li>
+  <li><strong>Output Layer — Final Prediction:</strong>
+    <ul>
+      <li>Contains 10 neurons — one for each digit (0–9).</li>
+      <li>Uses the <em>softmax</em> activation function to convert raw scores into probabilities (e.g., 92% confident this is a "3").</li>
+      <li>The neuron with the highest probability becomes the final prediction.</li>
+      <li>Analogy: A judge making a final verdict based on all the evidence gathered.</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:"z7", topic:"Deep Learning", marks:4, type:"explain",
+ q:"What is <strong>Automatic Feature Learning</strong> in Deep Learning? Why is it a significant advantage over traditional Machine Learning? [4 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Automatic Feature Learning means the deep learning system automatically identifies relevant patterns and characteristics in data WITHOUT human experts manually specifying those features.</li>
+  <li><strong>How it works:</strong> As data passes through multiple layers, each layer extracts increasingly abstract features. For face recognition: Layer 1 detects edges → Layer 2 detects facial parts → Layer 3 recognises a complete face.</li>
+  <li><strong>Advantage over Traditional ML:</strong>
+    <ul>
+      <li>Traditional ML requires human experts to manually <em>engineer features</em> — e.g., specifying which pixel patterns indicate a cat. This is time-consuming, costly, and introduces human bias.</li>
+      <li>Deep Learning removes this bottleneck entirely — the network discovers the best features on its own from raw data.</li>
+    </ul>
+  </li>
+  <li><strong>Impact:</strong> Dramatically improves model accuracy and makes AI applicable to tasks (like understanding raw images or speech) where hand-crafting features is practically impossible.</li>
+</ul>`},
+
+{id:"z8", topic:"Deep Learning", marks:5, type:"list",
+ q:"State and explain <strong>FIVE reasons</strong> why Deep Learning has surpassed traditional rule-based systems and earlier ML techniques. [5 Marks: 1 Mark Each]",
+ answer:`<ul>
+  <li><strong>1. Handles Complexity:</strong> Deep networks learn hierarchical representations — simple to complex — making them capable of tasks (image recognition, language understanding) that explicit rules cannot handle.</li>
+  <li><strong>2. Automatic Feature Extraction:</strong> Eliminates the need for manual feature engineering, reducing human effort, bias, and domain-knowledge bottlenecks.</li>
+  <li><strong>3. Scales with Data:</strong> Unlike traditional ML that plateaus, deep learning performance continues to improve as more training data is added — making it ideal for the big data era.</li>
+  <li><strong>4. GPU Acceleration:</strong> GPUs enable thousands of parallel matrix operations simultaneously, making it feasible to train networks with millions of parameters in reasonable time.</li>
+  <li><strong>5. Transfer Learning:</strong> Pre-trained deep networks (e.g., ResNet trained on ImageNet) can be fine-tuned for new tasks with far less data — dramatically reducing the cost of building new AI systems.</li>
+</ul>`},
+
+/* ── NLP ── */
+{id:"z9", topic:"NLP", marks:6, type:"explain",
+ q:"Explain the concept of <strong>Tokenization</strong> in Natural Language Processing. Why is it necessary? Illustrate with a clear example. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Why Tokenization is Necessary:</strong> Computers interpret numbers, not characters or words. Raw text is unstructured and cannot be processed by mathematical algorithms. Tokenization converts text into numeric form that ML models can work with.</li>
+  <li><strong>Definition:</strong> Tokenization is the process of breaking raw text into smaller units (tokens — words or sub-words) and assigning each a unique integer ID.</li>
+  <li><strong>Example — Word-Level Tokenization:</strong>
+    <ul>
+      <li>Sentence: "I love my dog" → Vocabulary: {I=1, love=2, my=3, dog=4} → Encoded: [1, 2, 3, 4]</li>
+      <li>New sentence: "I love my cat" → cat gets a new token: cat=5 → Encoded: [1, 2, 3, 5]</li>
+      <li>The shared prefix [1, 2, 3] helps the model identify semantic similarity between the two sentences.</li>
+    </ul>
+  </li>
+  <li><strong>Benefits:</strong>
+    <ul>
+      <li>Standardises input for ML models.</li>
+      <li>Preserves word identity and order.</li>
+      <li>Enables pattern recognition across sentences.</li>
+      <li>Foundation for all downstream NLP tasks (classification, translation, summarisation).</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:"z10", topic:"NLP", marks:4, type:"compare",
+ q:"Compare <strong>ASCII (Letter-Level) Encoding</strong> with <strong>Word-Level Tokenization</strong>. State TWO limitations of ASCII encoding for NLP tasks. [4 Marks]",
+ answer:`<ul>
+  <li><strong>ASCII Letter-Level Encoding:</strong> Maps each individual character to its ASCII numeric code.
+    <ul><li>Example: "Listen" → [108, 105, 115, 116, 101, 110]</li></ul>
+  </li>
+  <li><strong>Word-Level Tokenization:</strong> Assigns a unique integer to each distinct word.
+    <ul><li>Example: "I love my dog" → [1, 2, 3, 4]</li></ul>
+  </li>
+  <li><strong>TWO Limitations of ASCII Encoding:</strong>
+    <ol>
+      <li><strong>No semantic meaning:</strong> "Listen" and "Silent" share the same letters (same ASCII codes in different order) but have completely different meanings. ASCII cannot distinguish them semantically.</li>
+      <li><strong>No sentiment or intent:</strong> The word "happy" has no more positive a numeric representation than "sad" — emotional tone and intent are completely lost in letter-level encoding.</li>
+    </ol>
+  </li>
+  <li><strong>Conclusion:</strong> Word-level tokenization is far superior for NLP because it preserves word identity, order, and allows models to learn semantic relationships between words.</li>
+</ul>`},
+
+{id:"z11", topic:"NLP", marks:6, type:"list",
+ q:"Identify and explain <strong>THREE tasks</strong> that Natural Language Processing (NLP) enables machines to perform. For each, give a real-world application. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>1. Machine Translation:</strong>
+    <ul>
+      <li>NLP enables automatic translation of text between languages by understanding grammar, context, and meaning — not just word-for-word substitution.</li>
+      <li><em>Application:</em> Google Translate supports over 100 languages in real time, enabling global communication without human translators.</li>
+    </ul>
+  </li>
+  <li><strong>2. Sentiment Analysis:</strong>
+    <ul>
+      <li>Determines the emotional tone (positive, negative, neutral) of a piece of text by analysing word choice, context, and phrasing patterns.</li>
+      <li><em>Application:</em> Companies analyse customer reviews and social media posts automatically to monitor brand reputation and product satisfaction.</li>
+    </ul>
+  </li>
+  <li><strong>3. Question Answering / Conversational AI:</strong>
+    <ul>
+      <li>NLP allows machines to understand questions posed in natural language and generate relevant, coherent answers.</li>
+      <li><em>Application:</em> Customer service chatbots handle thousands of support queries simultaneously, resolving common issues without human agents.</li>
+    </ul>
+  </li>
+</ul>`},
+
+/* ── PROMPT ENGINEERING ── */
+{id:"z12", topic:"Prompt Engineering", marks:6, type:"explain",
+ q:"Define <strong>Generative AI</strong> and explain how it differs from traditional AI systems. Give TWO examples of Generative AI in use today. [6 Marks]",
+ answer:`<ul>
+  <li><strong>Definition of Generative AI:</strong> A branch of AI that creates NEW content — text, images, music, code, video — by learning patterns from large datasets rather than following fixed rules. It synthesises new information by generalising from what it has seen.</li>
+  <li><strong>How it differs from Traditional AI:</strong>
+    <ul>
+      <li><strong>Traditional AI:</strong> Recognises, classifies, or predicts from existing data (e.g., spam filter, image classifier). The output is a label or decision.</li>
+      <li><strong>Generative AI:</strong> CREATES new content that did not exist before. It imitates how humans create, imagine, and innovate. Output is new text, images, or media.</li>
+      <li>Key difference: Traditional AI analyses; Generative AI produces.</li>
+    </ul>
+  </li>
+  <li><strong>TWO Examples:</strong>
+    <ol>
+      <li><strong>ChatGPT (OpenAI):</strong> Generates human-quality text responses, essays, code, and summaries from natural language prompts.</li>
+      <li><strong>DALL·E / Midjourney:</strong> Generates original images from text descriptions — "a sunset over Accra painted in watercolour" — producing artwork that never existed before.</li>
+    </ol>
+  </li>
+</ul>`},
+
+{id:"z13", topic:"Prompt Engineering", marks:6, type:"list",
+ q:"Describe <strong>THREE Prompt Engineering techniques</strong> from your lecture notes. For each, state when it is most useful and provide a clear example. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>1. Direct Instruction Prompting:</strong>
+    <ul>
+      <li><em>Description:</em> Give the AI very specific, detailed instructions that remove all ambiguity about what you want.</li>
+      <li><em>Most useful for:</em> Structured outputs — summaries, reports, emails, formatted lists, code.</li>
+      <li><em>Example:</em> Instead of "Write a reply to a complaint," say: "Write a polite, professional email that apologises for a 3-day shipping delay, explains it was due to a logistics issue, and offers the customer a 15% discount on their next order."</li>
+    </ul>
+  </li>
+  <li><strong>2. Few-Shot Prompting:</strong>
+    <ul>
+      <li><em>Description:</em> Provide the AI with 1–10 worked examples of the task before asking it to perform it. The AI learns the pattern from your examples.</li>
+      <li><em>Most useful for:</em> Tasks requiring a specific format or classification style the AI might not follow by default.</li>
+      <li><em>Example:</em> Show 3 labelled customer reviews (Positive / Negative / Neutral), then ask it to classify a new review using the same format.</li>
+    </ul>
+  </li>
+  <li><strong>3. Time-Conditioned Prompting:</strong>
+    <ul>
+      <li><em>Description:</em> Add time-based instructions so the AI responds as if tied to a specific date, season, event, or project stage.</li>
+      <li><em>Most useful for:</em> Content marketing, seasonal planning, project management, and academic calendars.</li>
+      <li><em>Example:</em> "Create a study plan for a student in week 10 of a 14-week AI course who has covered Machine Learning but not yet Deep Learning."</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:"z14", topic:"Prompt Engineering", marks:4, type:"explain",
+ q:"What is <strong>Prompt Optimization</strong> and why does it matter? List FOUR steps in the prompt optimization process. [4 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Prompt Optimization is the iterative process of improving and fine-tuning AI prompts so they produce more accurate, relevant, clear, and useful responses.</li>
+  <li><strong>Why it matters:</strong> The quality of AI output is directly tied to the quality of the input prompt. Poorly written prompts produce vague, off-topic, or biased results. Optimised prompts save time, reduce errors, and produce professional-quality output — critical for academic and business use.</li>
+  <li><strong>FOUR Steps:</strong>
+    <ol>
+      <li><strong>Write an initial prompt</strong> and observe the AI's response carefully.</li>
+      <li><strong>Identify weaknesses</strong> — is the output too vague, too long, off-topic, or incorrectly formatted?</li>
+      <li><strong>Refine the prompt</strong> — adjust wording, add specific instructions, specify tone, word limit, or output structure.</li>
+      <li><strong>Test iteratively</strong> — compare multiple versions and select the one that consistently produces the best result.</li>
+    </ol>
+  </li>
+</ul>`},
+
+/* ── ML PARADIGMS ── */
+{id:"z15", topic:"ML Paradigms", marks:6, type:"explain",
+ q:"Explain <strong>Regression</strong> in Machine Learning. Describe THREE types of regression algorithms and give a real-world use case for each. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>Definition of Regression:</strong> Regression is a supervised ML task used when the output is a CONTINUOUS NUMERICAL VALUE — it answers questions like "How much?" or "What number?" It works by finding the best-fit line or curve through data points to make predictions.</li>
+  <li><strong>1. Linear Regression:</strong>
+    <ul>
+      <li>Fits a straight line through data to predict a continuous value.</li>
+      <li><em>Use case:</em> Predicting household energy consumption based on temperature and time of day.</li>
+    </ul>
+  </li>
+  <li><strong>2. Polynomial Regression:</strong>
+    <ul>
+      <li>Fits a curved line — handles non-linear relationships where the rate of change is not constant.</li>
+      <li><em>Use case:</em> Predicting the trajectory of a thrown ball, or modelling population growth curves in economics.</li>
+    </ul>
+  </li>
+  <li><strong>3. Lasso / Ridge Regression:</strong>
+    <ul>
+      <li>Linear regression with regularisation penalties that prevent extreme, unrealistic predictions and reduce overfitting.</li>
+      <li><em>Use case:</em> A bank predicting a safe, realistic loan amount — Ridge/Lasso ensure the model does not overfit to outlier customers.</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:"z16", topic:"ML Paradigms", marks:6, type:"compare",
+ q:"Compare <strong>Supervised, Unsupervised, and Reinforcement Learning</strong>. For each, state the data requirement, the learning method, and give ONE example. [6 Marks: 2 Marks Each]",
+ answer:`<table style="width:100%;border-collapse:collapse;font-size:.87rem">
+  <tr style="background:var(--surf2)">
+    <th style="padding:8px;border:1px solid var(--bdr)">Aspect</th>
+    <th style="padding:8px;border:1px solid var(--bdr)">Supervised</th>
+    <th style="padding:8px;border:1px solid var(--bdr)">Unsupervised</th>
+    <th style="padding:8px;border:1px solid var(--bdr)">Reinforcement</th>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Data Required</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Labeled data (input + correct output)</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Unlabeled data (no correct answers)</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">No dataset — learns from environment interaction</td>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Learning Method</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Learns from correct answers provided by a "teacher"</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Discovers hidden patterns and groupings on its own</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Learns by trial-and-error using rewards and penalties</td>
+  </tr>
+  <tr>
+    <td style="padding:8px;border:1px solid var(--bdr)"><strong>Example</strong></td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Spam email detection</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">Customer segmentation</td>
+    <td style="padding:8px;border:1px solid var(--bdr)">AlphaGo playing the game of Go</td>
+  </tr>
+</table>`},
+
+{id:"z17", topic:"ML Paradigms", marks:5, type:"explain",
+ q:"Explain <strong>Unsupervised Learning</strong> and describe how it is used in <strong>Customer Segmentation</strong>. Why is unsupervised learning valuable when labeled data is unavailable? [5 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Unsupervised Learning finds patterns, groupings, or structure in data WITHOUT labels or predefined categories. The algorithm explores raw data and discovers hidden structure on its own — no "right answers" are provided during training.</li>
+  <li><strong>Customer Segmentation Example:</strong>
+    <ol>
+      <li>Collect raw customer data: shopping frequency, spending amount, product types purchased, location.</li>
+      <li>Run a clustering algorithm (e.g., K-Means) — NO predefined groups given.</li>
+      <li>Algorithm automatically groups customers into natural segments: "bargain seekers," "frequent high spenders," "seasonal shoppers."</li>
+      <li>Business uses these discovered segments to personalise marketing, offers, and product recommendations.</li>
+    </ol>
+  </li>
+  <li><strong>Why valuable without labeled data:</strong>
+    <ul>
+      <li>Labeling data manually is expensive and time-consuming — requiring human experts to tag thousands of examples.</li>
+      <li>For many real-world problems (customer behaviour, network traffic, medical signals), predefined categories simply do not exist yet.</li>
+      <li>Unsupervised learning reveals patterns and insights that human analysts might never think to look for.</li>
+    </ul>
+  </li>
+</ul>`},
+
+/* ── ETHICS ── */
+{id:"z18", topic:"Ethics", marks:6, type:"explain",
+ q:"Discuss <strong>THREE ethical concerns</strong> raised by the growing use of Artificial Intelligence. For each, give a real-world example. [6 Marks: 2 Marks Each]",
+ answer:`<ul>
+  <li><strong>1. Algorithmic Bias and Discrimination:</strong>
+    <ul>
+      <li>AI systems inherit and amplify biases present in their training data — leading to unfair outcomes that disadvantage certain groups.</li>
+      <li>Bias is not just a technical issue but a social justice issue.</li>
+      <li><em>Example:</em> Amazon's AI recruitment tool was found to penalise female candidates because it was trained on historical hiring data where men dominated technical roles. The system learned historical inequality rather than merit.</li>
+    </ul>
+  </li>
+  <li><strong>2. Privacy and Data Protection:</strong>
+    <ul>
+      <li>AI systems require vast amounts of personal data to function effectively, raising serious concerns about consent, surveillance, and misuse.</li>
+      <li>Regulations such as GDPR (General Data Protection Regulation) have been introduced to give users control over their data.</li>
+      <li><em>Example:</em> Smart home devices (voice assistants) continuously collect audio data from homes — sometimes without users being fully aware of what is recorded and stored.</li>
+    </ul>
+  </li>
+  <li><strong>3. Lack of Transparency ("Black Box" Problem):</strong>
+    <ul>
+      <li>Many AI models — particularly deep learning — operate as "black boxes": users can see inputs and outputs but cannot understand how decisions are made.</li>
+      <li>This creates accountability issues when AI makes high-stakes decisions in healthcare, finance, or criminal justice.</li>
+      <li><em>Example:</em> An AI denying a loan application cannot explain why — the applicant has no way to understand or challenge the decision, which may violate their legal rights under GDPR.</li>
+    </ul>
+  </li>
+</ul>`},
+
+{id:"z19", topic:"Ethics", marks:4, type:"explain",
+ q:"What is the <strong>impact of AI on employment</strong>? Discuss both the risks and the opportunities created by AI automation. [4 Marks]",
+ answer:`<ul>
+  <li><strong>Risks — Job Displacement:</strong>
+    <ul>
+      <li>AI and automation are replacing repetitive, routine tasks across many industries.</li>
+      <li>Sectors most affected: retail (self-checkout, inventory robots), banking (automated loan processing), transportation (self-driving vehicles), and customer service (chatbots replacing call centre agents).</li>
+      <li>Workers in low-skill, rule-based roles face the greatest displacement risk.</li>
+    </ul>
+  </li>
+  <li><strong>Opportunities — New Roles Created:</strong>
+    <ul>
+      <li>AI creates demand for new roles: AI engineers, data scientists, ML model trainers, AI ethics officers, and prompt engineers.</li>
+      <li>AI augments human workers — doctors use AI diagnostics tools to work faster and more accurately; engineers use AI to solve complex design problems.</li>
+      <li>Industries like healthcare, education, and scientific research are being expanded by AI, not replaced.</li>
+    </ul>
+  </li>
+  <li><strong>Conclusion:</strong> The impact is a trade-off. Society must invest in reskilling and education to ensure workers can transition into AI-era roles, rather than simply being displaced by automation.</li>
+</ul>`},
+
+{id:"z20", topic:"AI Foundations", marks:4, type:"explain",
+ q:"What is the <strong>Turing Test</strong>? Has any machine fully passed it? What does this tell us about the current state of AI? [4 Marks]",
+ answer:`<ul>
+  <li><strong>Definition:</strong> Proposed by Alan Turing in 1950, the Turing Test assesses a machine's ability to exhibit human-like intelligent behaviour. A human evaluator holds a text conversation with both a human and a machine simultaneously. If the evaluator cannot reliably distinguish the machine from the human, the machine is said to have passed.</li>
+  <li><strong>Has any machine fully passed?</strong> No machine has fully passed the Turing Test in a general, unrestricted sense. Some programs (like ELIZA and Eugene Goostman) have fooled evaluators in limited, narrow conversations — but only by exploiting the test's limitations rather than exhibiting true understanding.</li>
+  <li><strong>What this tells us about AI today:</strong>
+    <ul>
+      <li>All current AI systems are NARROW AI — highly capable within specific domains but lacking the general reasoning, common sense, and contextual understanding of humans.</li>
+      <li>Modern AI (like ChatGPT) can produce impressively human-like text, yet still makes fundamental reasoning errors that humans would not.</li>
+      <li>AGI (Artificial General Intelligence) — a machine that could genuinely pass the Turing Test across all domains — remains a future goal, not a present reality.</li>
+    </ul>
+  </li>
+</ul>`}
+
+];
+
+// ═══════════════════════════════════════════════
 // WRITING
 // ═══════════════════════════════════════════════
 function renderWriting(){
@@ -3195,6 +3622,44 @@ function renderWriting(){
       </div>
     </div>
   `).join('');
+}
+
+// ═══════════════════════════════════════════════
+// SECTION Z
+// ═══════════════════════════════════════════════
+function renderSectionZ(){
+  const topic = document.getElementById('szFilter').value;
+  const filtered = sectionZData.filter(q => topic==='all' || q.topic===topic);
+  const c = document.getElementById('szContainer');
+  if(!filtered.length){
+    c.innerHTML='<div class="empty"><div class="icon">📚</div><p>No questions for this topic.</p></div>';
+    return;
+  }
+  c.innerHTML = filtered.map(q=>`
+    <div class="writing-card">
+      <div class="q-meta">
+        <span class="q-num">${q.id.toUpperCase()}</span>
+        <span class="q-topic">${q.topic}</span>
+        <span class="q-topic" style="background:rgba(245,158,11,.15);color:var(--warn)">${q.type}</span>
+        <span class="q-topic" style="background:rgba(99,102,241,.15);color:var(--pri-l)">[${q.marks} Marks]</span>
+      </div>
+      <div class="w-question">${q.q}</div>
+      <button class="reveal-btn" id="szbtn-${q.id}" onclick="toggleSZ('${q.id}')">Show Model Answer</button>
+      <div class="model-answer" id="szma-${q.id}">
+        <h4>Model Answer</h4>
+        ${q.answer}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleSZ(id){
+  const ma = document.getElementById(`szma-${id}`);
+  const btn = document.getElementById(`szbtn-${id}`);
+  const showing = ma.classList.contains('show');
+  ma.classList.toggle('show', !showing);
+  btn.textContent = showing ? 'Show Model Answer' : 'Hide Model Answer';
+  btn.classList.toggle('revealed', !showing);
 }
 
 function toggleReveal(id){
@@ -3260,6 +3725,7 @@ function resetAll(){
 renderMCQ();
 renderTF();
 renderWriting();
+renderSectionZ();
 </script>
 </body>
 </html>
